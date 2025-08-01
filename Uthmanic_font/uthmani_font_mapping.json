@@ -1,0 +1,1701 @@
+{
+  "metadata": {
+    "description": "جدول الخط العثماني للمطابقة الدقيقة",
+    "total_characters": 174,
+    "version": "1.0"
+  },
+  "character_map": {
+    "ا": {
+      "unicode": "U+0627",
+      "unicode_value": 1575,
+      "base_char": "ا",
+      "char": "ا",
+      "is_variant": false
+    },
+    "أ": {
+      "unicode": "U+0623",
+      "unicode_value": 1571,
+      "base_char": "ا",
+      "char": "أ",
+      "is_variant": true
+    },
+    "إ": {
+      "unicode": "U+0625",
+      "unicode_value": 1573,
+      "base_char": "ا",
+      "char": "إ",
+      "is_variant": true
+    },
+    "آ": {
+      "unicode": "U+0622",
+      "unicode_value": 1570,
+      "base_char": "ا",
+      "char": "آ",
+      "is_variant": true
+    },
+    "ٱ": {
+      "unicode": "U+0671",
+      "unicode_value": 1649,
+      "base_char": "ا",
+      "char": "ٱ",
+      "is_variant": true
+    },
+    "ﺍ": {
+      "unicode": "U+FE8D",
+      "unicode_value": 65165,
+      "base_char": "ا",
+      "char": "ﺍ",
+      "is_variant": true
+    },
+    "ﺎ": {
+      "unicode": "U+FE8E",
+      "unicode_value": 65166,
+      "base_char": "ا",
+      "char": "ﺎ",
+      "is_variant": true
+    },
+    "ب": {
+      "unicode": "U+0628",
+      "unicode_value": 1576,
+      "base_char": "ب",
+      "char": "ب",
+      "is_variant": false
+    },
+    "ﺏ": {
+      "unicode": "U+FE8F",
+      "unicode_value": 65167,
+      "base_char": "ب",
+      "char": "ﺏ",
+      "is_variant": true
+    },
+    "ﺐ": {
+      "unicode": "U+FE90",
+      "unicode_value": 65168,
+      "base_char": "ب",
+      "char": "ﺐ",
+      "is_variant": true
+    },
+    "ﺑ": {
+      "unicode": "U+FE91",
+      "unicode_value": 65169,
+      "base_char": "ب",
+      "char": "ﺑ",
+      "is_variant": true
+    },
+    "ﺒ": {
+      "unicode": "U+FE92",
+      "unicode_value": 65170,
+      "base_char": "ب",
+      "char": "ﺒ",
+      "is_variant": true
+    },
+    "ت": {
+      "unicode": "U+062A",
+      "unicode_value": 1578,
+      "base_char": "ت",
+      "char": "ت",
+      "is_variant": false
+    },
+    "ﺕ": {
+      "unicode": "U+FE95",
+      "unicode_value": 65173,
+      "base_char": "ت",
+      "char": "ﺕ",
+      "is_variant": true
+    },
+    "ﺖ": {
+      "unicode": "U+FE96",
+      "unicode_value": 65174,
+      "base_char": "ت",
+      "char": "ﺖ",
+      "is_variant": true
+    },
+    "ﺗ": {
+      "unicode": "U+FE97",
+      "unicode_value": 65175,
+      "base_char": "ت",
+      "char": "ﺗ",
+      "is_variant": true
+    },
+    "ﺘ": {
+      "unicode": "U+FE98",
+      "unicode_value": 65176,
+      "base_char": "ت",
+      "char": "ﺘ",
+      "is_variant": true
+    },
+    "ث": {
+      "unicode": "U+062B",
+      "unicode_value": 1579,
+      "base_char": "ث",
+      "char": "ث",
+      "is_variant": false
+    },
+    "ﺙ": {
+      "unicode": "U+FE99",
+      "unicode_value": 65177,
+      "base_char": "ث",
+      "char": "ﺙ",
+      "is_variant": true
+    },
+    "ﺚ": {
+      "unicode": "U+FE9A",
+      "unicode_value": 65178,
+      "base_char": "ث",
+      "char": "ﺚ",
+      "is_variant": true
+    },
+    "ﺛ": {
+      "unicode": "U+FE9B",
+      "unicode_value": 65179,
+      "base_char": "ث",
+      "char": "ﺛ",
+      "is_variant": true
+    },
+    "ﺜ": {
+      "unicode": "U+FE9C",
+      "unicode_value": 65180,
+      "base_char": "ث",
+      "char": "ﺜ",
+      "is_variant": true
+    },
+    "ج": {
+      "unicode": "U+062C",
+      "unicode_value": 1580,
+      "base_char": "ج",
+      "char": "ج",
+      "is_variant": false
+    },
+    "ﺝ": {
+      "unicode": "U+FE9D",
+      "unicode_value": 65181,
+      "base_char": "ج",
+      "char": "ﺝ",
+      "is_variant": true
+    },
+    "ﺞ": {
+      "unicode": "U+FE9E",
+      "unicode_value": 65182,
+      "base_char": "ج",
+      "char": "ﺞ",
+      "is_variant": true
+    },
+    "ﺟ": {
+      "unicode": "U+FE9F",
+      "unicode_value": 65183,
+      "base_char": "ج",
+      "char": "ﺟ",
+      "is_variant": true
+    },
+    "ﺠ": {
+      "unicode": "U+FEA0",
+      "unicode_value": 65184,
+      "base_char": "ج",
+      "char": "ﺠ",
+      "is_variant": true
+    },
+    "ح": {
+      "unicode": "U+062D",
+      "unicode_value": 1581,
+      "base_char": "ح",
+      "char": "ح",
+      "is_variant": false
+    },
+    "ﺡ": {
+      "unicode": "U+FEA1",
+      "unicode_value": 65185,
+      "base_char": "ح",
+      "char": "ﺡ",
+      "is_variant": true
+    },
+    "ﺢ": {
+      "unicode": "U+FEA2",
+      "unicode_value": 65186,
+      "base_char": "ح",
+      "char": "ﺢ",
+      "is_variant": true
+    },
+    "ﺣ": {
+      "unicode": "U+FEA3",
+      "unicode_value": 65187,
+      "base_char": "ح",
+      "char": "ﺣ",
+      "is_variant": true
+    },
+    "ﺤ": {
+      "unicode": "U+FEA4",
+      "unicode_value": 65188,
+      "base_char": "ح",
+      "char": "ﺤ",
+      "is_variant": true
+    },
+    "خ": {
+      "unicode": "U+062E",
+      "unicode_value": 1582,
+      "base_char": "خ",
+      "char": "خ",
+      "is_variant": false
+    },
+    "ﺥ": {
+      "unicode": "U+FEA5",
+      "unicode_value": 65189,
+      "base_char": "خ",
+      "char": "ﺥ",
+      "is_variant": true
+    },
+    "ﺦ": {
+      "unicode": "U+FEA6",
+      "unicode_value": 65190,
+      "base_char": "خ",
+      "char": "ﺦ",
+      "is_variant": true
+    },
+    "ﺧ": {
+      "unicode": "U+FEA7",
+      "unicode_value": 65191,
+      "base_char": "خ",
+      "char": "ﺧ",
+      "is_variant": true
+    },
+    "ﺨ": {
+      "unicode": "U+FEA8",
+      "unicode_value": 65192,
+      "base_char": "خ",
+      "char": "ﺨ",
+      "is_variant": true
+    },
+    "د": {
+      "unicode": "U+062F",
+      "unicode_value": 1583,
+      "base_char": "د",
+      "char": "د",
+      "is_variant": false
+    },
+    "ﺩ": {
+      "unicode": "U+FEA9",
+      "unicode_value": 65193,
+      "base_char": "د",
+      "char": "ﺩ",
+      "is_variant": true
+    },
+    "ﺪ": {
+      "unicode": "U+FEAA",
+      "unicode_value": 65194,
+      "base_char": "د",
+      "char": "ﺪ",
+      "is_variant": true
+    },
+    "ذ": {
+      "unicode": "U+0630",
+      "unicode_value": 1584,
+      "base_char": "ذ",
+      "char": "ذ",
+      "is_variant": false
+    },
+    "ﺫ": {
+      "unicode": "U+FEAB",
+      "unicode_value": 65195,
+      "base_char": "ذ",
+      "char": "ﺫ",
+      "is_variant": true
+    },
+    "ﺬ": {
+      "unicode": "U+FEAC",
+      "unicode_value": 65196,
+      "base_char": "ذ",
+      "char": "ﺬ",
+      "is_variant": true
+    },
+    "ر": {
+      "unicode": "U+0631",
+      "unicode_value": 1585,
+      "base_char": "ر",
+      "char": "ر",
+      "is_variant": false
+    },
+    "ﺭ": {
+      "unicode": "U+FEAD",
+      "unicode_value": 65197,
+      "base_char": "ر",
+      "char": "ﺭ",
+      "is_variant": true
+    },
+    "ﺮ": {
+      "unicode": "U+FEAE",
+      "unicode_value": 65198,
+      "base_char": "ر",
+      "char": "ﺮ",
+      "is_variant": true
+    },
+    "ز": {
+      "unicode": "U+0632",
+      "unicode_value": 1586,
+      "base_char": "ز",
+      "char": "ز",
+      "is_variant": false
+    },
+    "ﺯ": {
+      "unicode": "U+FEAF",
+      "unicode_value": 65199,
+      "base_char": "ز",
+      "char": "ﺯ",
+      "is_variant": true
+    },
+    "ﺰ": {
+      "unicode": "U+FEB0",
+      "unicode_value": 65200,
+      "base_char": "ز",
+      "char": "ﺰ",
+      "is_variant": true
+    },
+    "س": {
+      "unicode": "U+0633",
+      "unicode_value": 1587,
+      "base_char": "س",
+      "char": "س",
+      "is_variant": false
+    },
+    "ﺱ": {
+      "unicode": "U+FEB1",
+      "unicode_value": 65201,
+      "base_char": "س",
+      "char": "ﺱ",
+      "is_variant": true
+    },
+    "ﺲ": {
+      "unicode": "U+FEB2",
+      "unicode_value": 65202,
+      "base_char": "س",
+      "char": "ﺲ",
+      "is_variant": true
+    },
+    "ﺳ": {
+      "unicode": "U+FEB3",
+      "unicode_value": 65203,
+      "base_char": "س",
+      "char": "ﺳ",
+      "is_variant": true
+    },
+    "ﺴ": {
+      "unicode": "U+FEB4",
+      "unicode_value": 65204,
+      "base_char": "س",
+      "char": "ﺴ",
+      "is_variant": true
+    },
+    "ش": {
+      "unicode": "U+0634",
+      "unicode_value": 1588,
+      "base_char": "ش",
+      "char": "ش",
+      "is_variant": false
+    },
+    "ﺵ": {
+      "unicode": "U+FEB5",
+      "unicode_value": 65205,
+      "base_char": "ش",
+      "char": "ﺵ",
+      "is_variant": true
+    },
+    "ﺶ": {
+      "unicode": "U+FEB6",
+      "unicode_value": 65206,
+      "base_char": "ش",
+      "char": "ﺶ",
+      "is_variant": true
+    },
+    "ﺷ": {
+      "unicode": "U+FEB7",
+      "unicode_value": 65207,
+      "base_char": "ش",
+      "char": "ﺷ",
+      "is_variant": true
+    },
+    "ﺸ": {
+      "unicode": "U+FEB8",
+      "unicode_value": 65208,
+      "base_char": "ش",
+      "char": "ﺸ",
+      "is_variant": true
+    },
+    "ص": {
+      "unicode": "U+0635",
+      "unicode_value": 1589,
+      "base_char": "ص",
+      "char": "ص",
+      "is_variant": false
+    },
+    "ﺹ": {
+      "unicode": "U+FEB9",
+      "unicode_value": 65209,
+      "base_char": "ص",
+      "char": "ﺹ",
+      "is_variant": true
+    },
+    "ﺺ": {
+      "unicode": "U+FEBA",
+      "unicode_value": 65210,
+      "base_char": "ص",
+      "char": "ﺺ",
+      "is_variant": true
+    },
+    "ﺻ": {
+      "unicode": "U+FEBB",
+      "unicode_value": 65211,
+      "base_char": "ص",
+      "char": "ﺻ",
+      "is_variant": true
+    },
+    "ﺼ": {
+      "unicode": "U+FEBC",
+      "unicode_value": 65212,
+      "base_char": "ص",
+      "char": "ﺼ",
+      "is_variant": true
+    },
+    "ض": {
+      "unicode": "U+0636",
+      "unicode_value": 1590,
+      "base_char": "ض",
+      "char": "ض",
+      "is_variant": false
+    },
+    "ﺽ": {
+      "unicode": "U+FEBD",
+      "unicode_value": 65213,
+      "base_char": "ض",
+      "char": "ﺽ",
+      "is_variant": true
+    },
+    "ﺾ": {
+      "unicode": "U+FEBE",
+      "unicode_value": 65214,
+      "base_char": "ض",
+      "char": "ﺾ",
+      "is_variant": true
+    },
+    "ﺿ": {
+      "unicode": "U+FEBF",
+      "unicode_value": 65215,
+      "base_char": "ض",
+      "char": "ﺿ",
+      "is_variant": true
+    },
+    "ﻀ": {
+      "unicode": "U+FEC0",
+      "unicode_value": 65216,
+      "base_char": "ض",
+      "char": "ﻀ",
+      "is_variant": true
+    },
+    "ط": {
+      "unicode": "U+0637",
+      "unicode_value": 1591,
+      "base_char": "ط",
+      "char": "ط",
+      "is_variant": false
+    },
+    "ﻁ": {
+      "unicode": "U+FEC1",
+      "unicode_value": 65217,
+      "base_char": "ط",
+      "char": "ﻁ",
+      "is_variant": true
+    },
+    "ﻂ": {
+      "unicode": "U+FEC2",
+      "unicode_value": 65218,
+      "base_char": "ط",
+      "char": "ﻂ",
+      "is_variant": true
+    },
+    "ﻃ": {
+      "unicode": "U+FEC3",
+      "unicode_value": 65219,
+      "base_char": "ط",
+      "char": "ﻃ",
+      "is_variant": true
+    },
+    "ﻄ": {
+      "unicode": "U+FEC4",
+      "unicode_value": 65220,
+      "base_char": "ط",
+      "char": "ﻄ",
+      "is_variant": true
+    },
+    "ظ": {
+      "unicode": "U+0638",
+      "unicode_value": 1592,
+      "base_char": "ظ",
+      "char": "ظ",
+      "is_variant": false
+    },
+    "ﻅ": {
+      "unicode": "U+FEC5",
+      "unicode_value": 65221,
+      "base_char": "ظ",
+      "char": "ﻅ",
+      "is_variant": true
+    },
+    "ﻆ": {
+      "unicode": "U+FEC6",
+      "unicode_value": 65222,
+      "base_char": "ظ",
+      "char": "ﻆ",
+      "is_variant": true
+    },
+    "ﻇ": {
+      "unicode": "U+FEC7",
+      "unicode_value": 65223,
+      "base_char": "ظ",
+      "char": "ﻇ",
+      "is_variant": true
+    },
+    "ﻈ": {
+      "unicode": "U+FEC8",
+      "unicode_value": 65224,
+      "base_char": "ظ",
+      "char": "ﻈ",
+      "is_variant": true
+    },
+    "ع": {
+      "unicode": "U+0639",
+      "unicode_value": 1593,
+      "base_char": "ع",
+      "char": "ع",
+      "is_variant": false
+    },
+    "ﻉ": {
+      "unicode": "U+FEC9",
+      "unicode_value": 65225,
+      "base_char": "ع",
+      "char": "ﻉ",
+      "is_variant": true
+    },
+    "ﻊ": {
+      "unicode": "U+FECA",
+      "unicode_value": 65226,
+      "base_char": "ع",
+      "char": "ﻊ",
+      "is_variant": true
+    },
+    "ﻋ": {
+      "unicode": "U+FECB",
+      "unicode_value": 65227,
+      "base_char": "ع",
+      "char": "ﻋ",
+      "is_variant": true
+    },
+    "ﻌ": {
+      "unicode": "U+FECC",
+      "unicode_value": 65228,
+      "base_char": "ع",
+      "char": "ﻌ",
+      "is_variant": true
+    },
+    "غ": {
+      "unicode": "U+063A",
+      "unicode_value": 1594,
+      "base_char": "غ",
+      "char": "غ",
+      "is_variant": false
+    },
+    "ﻍ": {
+      "unicode": "U+FECD",
+      "unicode_value": 65229,
+      "base_char": "غ",
+      "char": "ﻍ",
+      "is_variant": true
+    },
+    "ﻎ": {
+      "unicode": "U+FECE",
+      "unicode_value": 65230,
+      "base_char": "غ",
+      "char": "ﻎ",
+      "is_variant": true
+    },
+    "ﻏ": {
+      "unicode": "U+FECF",
+      "unicode_value": 65231,
+      "base_char": "غ",
+      "char": "ﻏ",
+      "is_variant": true
+    },
+    "ﻐ": {
+      "unicode": "U+FED0",
+      "unicode_value": 65232,
+      "base_char": "غ",
+      "char": "ﻐ",
+      "is_variant": true
+    },
+    "ف": {
+      "unicode": "U+0641",
+      "unicode_value": 1601,
+      "base_char": "ف",
+      "char": "ف",
+      "is_variant": false
+    },
+    "ﻑ": {
+      "unicode": "U+FED1",
+      "unicode_value": 65233,
+      "base_char": "ف",
+      "char": "ﻑ",
+      "is_variant": true
+    },
+    "ﻒ": {
+      "unicode": "U+FED2",
+      "unicode_value": 65234,
+      "base_char": "ف",
+      "char": "ﻒ",
+      "is_variant": true
+    },
+    "ﻓ": {
+      "unicode": "U+FED3",
+      "unicode_value": 65235,
+      "base_char": "ف",
+      "char": "ﻓ",
+      "is_variant": true
+    },
+    "ﻔ": {
+      "unicode": "U+FED4",
+      "unicode_value": 65236,
+      "base_char": "ف",
+      "char": "ﻔ",
+      "is_variant": true
+    },
+    "ق": {
+      "unicode": "U+0642",
+      "unicode_value": 1602,
+      "base_char": "ق",
+      "char": "ق",
+      "is_variant": false
+    },
+    "ﻕ": {
+      "unicode": "U+FED5",
+      "unicode_value": 65237,
+      "base_char": "ق",
+      "char": "ﻕ",
+      "is_variant": true
+    },
+    "ﻖ": {
+      "unicode": "U+FED6",
+      "unicode_value": 65238,
+      "base_char": "ق",
+      "char": "ﻖ",
+      "is_variant": true
+    },
+    "ﻗ": {
+      "unicode": "U+FED7",
+      "unicode_value": 65239,
+      "base_char": "ق",
+      "char": "ﻗ",
+      "is_variant": true
+    },
+    "ﻘ": {
+      "unicode": "U+FED8",
+      "unicode_value": 65240,
+      "base_char": "ق",
+      "char": "ﻘ",
+      "is_variant": true
+    },
+    "ك": {
+      "unicode": "U+0643",
+      "unicode_value": 1603,
+      "base_char": "ك",
+      "char": "ك",
+      "is_variant": false
+    },
+    "ﻙ": {
+      "unicode": "U+FED9",
+      "unicode_value": 65241,
+      "base_char": "ك",
+      "char": "ﻙ",
+      "is_variant": true
+    },
+    "ﻚ": {
+      "unicode": "U+FEDA",
+      "unicode_value": 65242,
+      "base_char": "ك",
+      "char": "ﻚ",
+      "is_variant": true
+    },
+    "ﻛ": {
+      "unicode": "U+FEDB",
+      "unicode_value": 65243,
+      "base_char": "ك",
+      "char": "ﻛ",
+      "is_variant": true
+    },
+    "ﻜ": {
+      "unicode": "U+FEDC",
+      "unicode_value": 65244,
+      "base_char": "ك",
+      "char": "ﻜ",
+      "is_variant": true
+    },
+    "ل": {
+      "unicode": "U+0644",
+      "unicode_value": 1604,
+      "base_char": "ل",
+      "char": "ل",
+      "is_variant": false
+    },
+    "ﻝ": {
+      "unicode": "U+FEDD",
+      "unicode_value": 65245,
+      "base_char": "ل",
+      "char": "ﻝ",
+      "is_variant": true
+    },
+    "ﻞ": {
+      "unicode": "U+FEDE",
+      "unicode_value": 65246,
+      "base_char": "ل",
+      "char": "ﻞ",
+      "is_variant": true
+    },
+    "ﻟ": {
+      "unicode": "U+FEDF",
+      "unicode_value": 65247,
+      "base_char": "ل",
+      "char": "ﻟ",
+      "is_variant": true
+    },
+    "ﻠ": {
+      "unicode": "U+FEE0",
+      "unicode_value": 65248,
+      "base_char": "ل",
+      "char": "ﻠ",
+      "is_variant": true
+    },
+    "م": {
+      "unicode": "U+0645",
+      "unicode_value": 1605,
+      "base_char": "م",
+      "char": "م",
+      "is_variant": false
+    },
+    "ﻡ": {
+      "unicode": "U+FEE1",
+      "unicode_value": 65249,
+      "base_char": "م",
+      "char": "ﻡ",
+      "is_variant": true
+    },
+    "ﻢ": {
+      "unicode": "U+FEE2",
+      "unicode_value": 65250,
+      "base_char": "م",
+      "char": "ﻢ",
+      "is_variant": true
+    },
+    "ﻣ": {
+      "unicode": "U+FEE3",
+      "unicode_value": 65251,
+      "base_char": "م",
+      "char": "ﻣ",
+      "is_variant": true
+    },
+    "ﻤ": {
+      "unicode": "U+FEE4",
+      "unicode_value": 65252,
+      "base_char": "م",
+      "char": "ﻤ",
+      "is_variant": true
+    },
+    "ن": {
+      "unicode": "U+0646",
+      "unicode_value": 1606,
+      "base_char": "ن",
+      "char": "ن",
+      "is_variant": false
+    },
+    "ﻥ": {
+      "unicode": "U+FEE5",
+      "unicode_value": 65253,
+      "base_char": "ن",
+      "char": "ﻥ",
+      "is_variant": true
+    },
+    "ﻦ": {
+      "unicode": "U+FEE6",
+      "unicode_value": 65254,
+      "base_char": "ن",
+      "char": "ﻦ",
+      "is_variant": true
+    },
+    "ﻧ": {
+      "unicode": "U+FEE7",
+      "unicode_value": 65255,
+      "base_char": "ن",
+      "char": "ﻧ",
+      "is_variant": true
+    },
+    "ﻨ": {
+      "unicode": "U+FEE8",
+      "unicode_value": 65256,
+      "base_char": "ن",
+      "char": "ﻨ",
+      "is_variant": true
+    },
+    "ه": {
+      "unicode": "U+0647",
+      "unicode_value": 1607,
+      "base_char": "ه",
+      "char": "ه",
+      "is_variant": false
+    },
+    "ﻩ": {
+      "unicode": "U+FEE9",
+      "unicode_value": 65257,
+      "base_char": "ه",
+      "char": "ﻩ",
+      "is_variant": true
+    },
+    "ﻪ": {
+      "unicode": "U+FEEA",
+      "unicode_value": 65258,
+      "base_char": "ه",
+      "char": "ﻪ",
+      "is_variant": true
+    },
+    "ﻫ": {
+      "unicode": "U+FEEB",
+      "unicode_value": 65259,
+      "base_char": "ه",
+      "char": "ﻫ",
+      "is_variant": true
+    },
+    "ﻬ": {
+      "unicode": "U+FEEC",
+      "unicode_value": 65260,
+      "base_char": "ه",
+      "char": "ﻬ",
+      "is_variant": true
+    },
+    "ة": {
+      "unicode": "U+0629",
+      "unicode_value": 1577,
+      "base_char": "ه",
+      "char": "ة",
+      "is_variant": true
+    },
+    "ﺓ": {
+      "unicode": "U+FE93",
+      "unicode_value": 65171,
+      "base_char": "ه",
+      "char": "ﺓ",
+      "is_variant": true
+    },
+    "ﺔ": {
+      "unicode": "U+FE94",
+      "unicode_value": 65172,
+      "base_char": "ه",
+      "char": "ﺔ",
+      "is_variant": true
+    },
+    "و": {
+      "unicode": "U+0648",
+      "unicode_value": 1608,
+      "base_char": "و",
+      "char": "و",
+      "is_variant": false
+    },
+    "ﻭ": {
+      "unicode": "U+FEED",
+      "unicode_value": 65261,
+      "base_char": "و",
+      "char": "ﻭ",
+      "is_variant": true
+    },
+    "ﻮ": {
+      "unicode": "U+FEEE",
+      "unicode_value": 65262,
+      "base_char": "و",
+      "char": "ﻮ",
+      "is_variant": true
+    },
+    "ؤ": {
+      "unicode": "U+0624",
+      "unicode_value": 1572,
+      "base_char": "و",
+      "char": "ؤ",
+      "is_variant": true
+    },
+    "ي": {
+      "unicode": "U+064A",
+      "unicode_value": 1610,
+      "base_char": "ي",
+      "char": "ي",
+      "is_variant": false
+    },
+    "ﻱ": {
+      "unicode": "U+FEF1",
+      "unicode_value": 65265,
+      "base_char": "ي",
+      "char": "ﻱ",
+      "is_variant": true
+    },
+    "ﻲ": {
+      "unicode": "U+FEF2",
+      "unicode_value": 65266,
+      "base_char": "ي",
+      "char": "ﻲ",
+      "is_variant": true
+    },
+    "ﻳ": {
+      "unicode": "U+FEF3",
+      "unicode_value": 65267,
+      "base_char": "ي",
+      "char": "ﻳ",
+      "is_variant": true
+    },
+    "ﻴ": {
+      "unicode": "U+FEF4",
+      "unicode_value": 65268,
+      "base_char": "ي",
+      "char": "ﻴ",
+      "is_variant": true
+    },
+    "ى": {
+      "unicode": "U+0649",
+      "unicode_value": 1609,
+      "base_char": "ي",
+      "char": "ى",
+      "is_variant": true
+    },
+    "ﻯ": {
+      "unicode": "U+FEEF",
+      "unicode_value": 65263,
+      "base_char": "ي",
+      "char": "ﻯ",
+      "is_variant": true
+    },
+    "ﻰ": {
+      "unicode": "U+FEF0",
+      "unicode_value": 65264,
+      "base_char": "ي",
+      "char": "ﻰ",
+      "is_variant": true
+    },
+    "ئ": {
+      "unicode": "U+0626",
+      "unicode_value": 1574,
+      "base_char": "ي",
+      "char": "ئ",
+      "is_variant": true
+    },
+    "ﻻ": {
+      "unicode": "U+FEFB",
+      "unicode_value": 65275,
+      "base_char": "لا",
+      "char": "ﻻ",
+      "is_variant": true
+    },
+    "ﻼ": {
+      "unicode": "U+FEFC",
+      "unicode_value": 65276,
+      "base_char": "لا",
+      "char": "ﻼ",
+      "is_variant": true
+    },
+    "َ": {
+      "unicode": "U+064E",
+      "unicode_value": 1614,
+      "name": "فتحة",
+      "char": "َ",
+      "is_symbol": true
+    },
+    "ً": {
+      "unicode": "U+064B",
+      "unicode_value": 1611,
+      "name": "تنوين فتح",
+      "char": "ً",
+      "is_symbol": true
+    },
+    "ُ": {
+      "unicode": "U+064F",
+      "unicode_value": 1615,
+      "name": "ضمة",
+      "char": "ُ",
+      "is_symbol": true
+    },
+    "ٌ": {
+      "unicode": "U+064C",
+      "unicode_value": 1612,
+      "name": "تنوين ضم",
+      "char": "ٌ",
+      "is_symbol": true
+    },
+    "ِ": {
+      "unicode": "U+0650",
+      "unicode_value": 1616,
+      "name": "كسرة",
+      "char": "ِ",
+      "is_symbol": true
+    },
+    "ٍ": {
+      "unicode": "U+064D",
+      "unicode_value": 1613,
+      "name": "تنوين كسر",
+      "char": "ٍ",
+      "is_symbol": true
+    },
+    "ْ": {
+      "unicode": "U+0652",
+      "unicode_value": 1618,
+      "name": "سكون",
+      "char": "ْ",
+      "is_symbol": true
+    },
+    "ّ": {
+      "unicode": "U+0651",
+      "unicode_value": 1617,
+      "name": "شدة",
+      "char": "ّ",
+      "is_symbol": true
+    },
+    "ٰ": {
+      "unicode": "U+0670",
+      "unicode_value": 1648,
+      "name": "ألف خنجرية",
+      "char": "ٰ",
+      "is_symbol": true
+    },
+    "ٓ": {
+      "unicode": "U+0653",
+      "unicode_value": 1619,
+      "name": "مد",
+      "char": "ٓ",
+      "is_symbol": true
+    },
+    "ٔ": {
+      "unicode": "U+0654",
+      "unicode_value": 1620,
+      "name": "همزة فوق",
+      "char": "ٔ",
+      "is_symbol": true
+    },
+    "ٕ": {
+      "unicode": "U+0655",
+      "unicode_value": 1621,
+      "name": "همزة تحت",
+      "char": "ٕ",
+      "is_symbol": true
+    },
+    "ۖ": {
+      "unicode": "U+06D6",
+      "unicode_value": 1750,
+      "name": "وقف صلى",
+      "char": "ۖ",
+      "is_symbol": true
+    },
+    "ۗ": {
+      "unicode": "U+06D7",
+      "unicode_value": 1751,
+      "name": "وقف قل",
+      "char": "ۗ",
+      "is_symbol": true
+    },
+    "ۘ": {
+      "unicode": "U+06D8",
+      "unicode_value": 1752,
+      "name": "وقف قلي",
+      "char": "ۘ",
+      "is_symbol": true
+    },
+    "ۙ": {
+      "unicode": "U+06D9",
+      "unicode_value": 1753,
+      "name": "وقف قلى",
+      "char": "ۙ",
+      "is_symbol": true
+    },
+    "ۚ": {
+      "unicode": "U+06DA",
+      "unicode_value": 1754,
+      "name": "وقف ميم",
+      "char": "ۚ",
+      "is_symbol": true
+    },
+    "ۛ": {
+      "unicode": "U+06DB",
+      "unicode_value": 1755,
+      "name": "وقف جيم",
+      "char": "ۛ",
+      "is_symbol": true
+    },
+    "ۜ": {
+      "unicode": "U+06DC",
+      "unicode_value": 1756,
+      "name": "وقف خفيف",
+      "char": "ۜ",
+      "is_symbol": true
+    },
+    "۝": {
+      "unicode": "U+06DD",
+      "unicode_value": 1757,
+      "name": "نهاية آية",
+      "char": "۝",
+      "is_symbol": true
+    },
+    "۞": {
+      "unicode": "U+06DE",
+      "unicode_value": 1758,
+      "name": "زخرفة",
+      "char": "۞",
+      "is_symbol": true
+    },
+    "۩": {
+      "unicode": "U+06E9",
+      "unicode_value": 1769,
+      "name": "سجدة",
+      "char": "۩",
+      "is_symbol": true
+    },
+    "٠": {
+      "unicode": "U+0660",
+      "unicode_value": 1632,
+      "name": "0",
+      "char": "٠",
+      "is_symbol": true
+    },
+    "١": {
+      "unicode": "U+0661",
+      "unicode_value": 1633,
+      "name": "1",
+      "char": "١",
+      "is_symbol": true
+    },
+    "٢": {
+      "unicode": "U+0662",
+      "unicode_value": 1634,
+      "name": "2",
+      "char": "٢",
+      "is_symbol": true
+    },
+    "٣": {
+      "unicode": "U+0663",
+      "unicode_value": 1635,
+      "name": "3",
+      "char": "٣",
+      "is_symbol": true
+    },
+    "٤": {
+      "unicode": "U+0664",
+      "unicode_value": 1636,
+      "name": "4",
+      "char": "٤",
+      "is_symbol": true
+    },
+    "٥": {
+      "unicode": "U+0665",
+      "unicode_value": 1637,
+      "name": "5",
+      "char": "٥",
+      "is_symbol": true
+    },
+    "٦": {
+      "unicode": "U+0666",
+      "unicode_value": 1638,
+      "name": "6",
+      "char": "٦",
+      "is_symbol": true
+    },
+    "٧": {
+      "unicode": "U+0667",
+      "unicode_value": 1639,
+      "name": "7",
+      "char": "٧",
+      "is_symbol": true
+    },
+    "٨": {
+      "unicode": "U+0668",
+      "unicode_value": 1640,
+      "name": "8",
+      "char": "٨",
+      "is_symbol": true
+    },
+    "٩": {
+      "unicode": "U+0669",
+      "unicode_value": 1641,
+      "name": "9",
+      "char": "٩",
+      "is_symbol": true
+    }
+  },
+  "reverse_mapping": {
+    "ا": [
+      "ا",
+      "أ",
+      "إ",
+      "آ",
+      "ٱ",
+      "ﺍ",
+      "ﺎ"
+    ],
+    "ب": [
+      "ب",
+      "ﺏ",
+      "ﺐ",
+      "ﺑ",
+      "ﺒ"
+    ],
+    "ت": [
+      "ت",
+      "ﺕ",
+      "ﺖ",
+      "ﺗ",
+      "ﺘ"
+    ],
+    "ث": [
+      "ث",
+      "ﺙ",
+      "ﺚ",
+      "ﺛ",
+      "ﺜ"
+    ],
+    "ج": [
+      "ج",
+      "ﺝ",
+      "ﺞ",
+      "ﺟ",
+      "ﺠ"
+    ],
+    "ح": [
+      "ح",
+      "ﺡ",
+      "ﺢ",
+      "ﺣ",
+      "ﺤ"
+    ],
+    "خ": [
+      "خ",
+      "ﺥ",
+      "ﺦ",
+      "ﺧ",
+      "ﺨ"
+    ],
+    "د": [
+      "د",
+      "ﺩ",
+      "ﺪ"
+    ],
+    "ذ": [
+      "ذ",
+      "ﺫ",
+      "ﺬ"
+    ],
+    "ر": [
+      "ر",
+      "ﺭ",
+      "ﺮ"
+    ],
+    "ز": [
+      "ز",
+      "ﺯ",
+      "ﺰ"
+    ],
+    "س": [
+      "س",
+      "ﺱ",
+      "ﺲ",
+      "ﺳ",
+      "ﺴ"
+    ],
+    "ش": [
+      "ش",
+      "ﺵ",
+      "ﺶ",
+      "ﺷ",
+      "ﺸ"
+    ],
+    "ص": [
+      "ص",
+      "ﺹ",
+      "ﺺ",
+      "ﺻ",
+      "ﺼ"
+    ],
+    "ض": [
+      "ض",
+      "ﺽ",
+      "ﺾ",
+      "ﺿ",
+      "ﻀ"
+    ],
+    "ط": [
+      "ط",
+      "ﻁ",
+      "ﻂ",
+      "ﻃ",
+      "ﻄ"
+    ],
+    "ظ": [
+      "ظ",
+      "ﻅ",
+      "ﻆ",
+      "ﻇ",
+      "ﻈ"
+    ],
+    "ع": [
+      "ع",
+      "ﻉ",
+      "ﻊ",
+      "ﻋ",
+      "ﻌ"
+    ],
+    "غ": [
+      "غ",
+      "ﻍ",
+      "ﻎ",
+      "ﻏ",
+      "ﻐ"
+    ],
+    "ف": [
+      "ف",
+      "ﻑ",
+      "ﻒ",
+      "ﻓ",
+      "ﻔ"
+    ],
+    "ق": [
+      "ق",
+      "ﻕ",
+      "ﻖ",
+      "ﻗ",
+      "ﻘ"
+    ],
+    "ك": [
+      "ك",
+      "ﻙ",
+      "ﻚ",
+      "ﻛ",
+      "ﻜ"
+    ],
+    "ل": [
+      "ل",
+      "ﻝ",
+      "ﻞ",
+      "ﻟ",
+      "ﻠ"
+    ],
+    "م": [
+      "م",
+      "ﻡ",
+      "ﻢ",
+      "ﻣ",
+      "ﻤ"
+    ],
+    "ن": [
+      "ن",
+      "ﻥ",
+      "ﻦ",
+      "ﻧ",
+      "ﻨ"
+    ],
+    "ه": [
+      "ه",
+      "ﻩ",
+      "ﻪ",
+      "ﻫ",
+      "ﻬ",
+      "ة",
+      "ﺓ",
+      "ﺔ"
+    ],
+    "و": [
+      "و",
+      "ﻭ",
+      "ﻮ",
+      "ؤ"
+    ],
+    "ي": [
+      "ي",
+      "ﻱ",
+      "ﻲ",
+      "ﻳ",
+      "ﻴ",
+      "ى",
+      "ﻯ",
+      "ﻰ",
+      "ئ"
+    ],
+    "لا": [
+      "ﻻ",
+      "ﻼ"
+    ],
+    "َ": [
+      "َ"
+    ],
+    "ً": [
+      "ً"
+    ],
+    "ُ": [
+      "ُ"
+    ],
+    "ٌ": [
+      "ٌ"
+    ],
+    "ِ": [
+      "ِ"
+    ],
+    "ٍ": [
+      "ٍ"
+    ],
+    "ْ": [
+      "ْ"
+    ],
+    "ّ": [
+      "ّ"
+    ],
+    "ٰ": [
+      "ٰ"
+    ],
+    "ٓ": [
+      "ٓ"
+    ],
+    "ٔ": [
+      "ٔ"
+    ],
+    "ٕ": [
+      "ٕ"
+    ],
+    "ۖ": [
+      "ۖ"
+    ],
+    "ۗ": [
+      "ۗ"
+    ],
+    "ۘ": [
+      "ۘ"
+    ],
+    "ۙ": [
+      "ۙ"
+    ],
+    "ۚ": [
+      "ۚ"
+    ],
+    "ۛ": [
+      "ۛ"
+    ],
+    "ۜ": [
+      "ۜ"
+    ],
+    "۝": [
+      "۝"
+    ],
+    "۞": [
+      "۞"
+    ],
+    "۩": [
+      "۩"
+    ],
+    "٠": [
+      "٠"
+    ],
+    "١": [
+      "١"
+    ],
+    "٢": [
+      "٢"
+    ],
+    "٣": [
+      "٣"
+    ],
+    "٤": [
+      "٤"
+    ],
+    "٥": [
+      "٥"
+    ],
+    "٦": [
+      "٦"
+    ],
+    "٧": [
+      "٧"
+    ],
+    "٨": [
+      "٨"
+    ],
+    "٩": [
+      "٩"
+    ]
+  },
+  "normalization_rules": {
+    "ا": "ا",
+    "أ": "ا",
+    "إ": "ا",
+    "آ": "ا",
+    "ٱ": "ا",
+    "ﺍ": "ا",
+    "ﺎ": "ا",
+    "ب": "ب",
+    "ﺏ": "ب",
+    "ﺐ": "ب",
+    "ﺑ": "ب",
+    "ﺒ": "ب",
+    "ت": "ت",
+    "ﺕ": "ت",
+    "ﺖ": "ت",
+    "ﺗ": "ت",
+    "ﺘ": "ت",
+    "ث": "ث",
+    "ﺙ": "ث",
+    "ﺚ": "ث",
+    "ﺛ": "ث",
+    "ﺜ": "ث",
+    "ج": "ج",
+    "ﺝ": "ج",
+    "ﺞ": "ج",
+    "ﺟ": "ج",
+    "ﺠ": "ج",
+    "ح": "ح",
+    "ﺡ": "ح",
+    "ﺢ": "ح",
+    "ﺣ": "ح",
+    "ﺤ": "ح",
+    "خ": "خ",
+    "ﺥ": "خ",
+    "ﺦ": "خ",
+    "ﺧ": "خ",
+    "ﺨ": "خ",
+    "د": "د",
+    "ﺩ": "د",
+    "ﺪ": "د",
+    "ذ": "ذ",
+    "ﺫ": "ذ",
+    "ﺬ": "ذ",
+    "ر": "ر",
+    "ﺭ": "ر",
+    "ﺮ": "ر",
+    "ز": "ز",
+    "ﺯ": "ز",
+    "ﺰ": "ز",
+    "س": "س",
+    "ﺱ": "س",
+    "ﺲ": "س",
+    "ﺳ": "س",
+    "ﺴ": "س",
+    "ش": "ش",
+    "ﺵ": "ش",
+    "ﺶ": "ش",
+    "ﺷ": "ش",
+    "ﺸ": "ش",
+    "ص": "ص",
+    "ﺹ": "ص",
+    "ﺺ": "ص",
+    "ﺻ": "ص",
+    "ﺼ": "ص",
+    "ض": "ض",
+    "ﺽ": "ض",
+    "ﺾ": "ض",
+    "ﺿ": "ض",
+    "ﻀ": "ض",
+    "ط": "ط",
+    "ﻁ": "ط",
+    "ﻂ": "ط",
+    "ﻃ": "ط",
+    "ﻄ": "ط",
+    "ظ": "ظ",
+    "ﻅ": "ظ",
+    "ﻆ": "ظ",
+    "ﻇ": "ظ",
+    "ﻈ": "ظ",
+    "ع": "ع",
+    "ﻉ": "ع",
+    "ﻊ": "ع",
+    "ﻋ": "ع",
+    "ﻌ": "ع",
+    "غ": "غ",
+    "ﻍ": "غ",
+    "ﻎ": "غ",
+    "ﻏ": "غ",
+    "ﻐ": "غ",
+    "ف": "ف",
+    "ﻑ": "ف",
+    "ﻒ": "ف",
+    "ﻓ": "ف",
+    "ﻔ": "ف",
+    "ق": "ق",
+    "ﻕ": "ق",
+    "ﻖ": "ق",
+    "ﻗ": "ق",
+    "ﻘ": "ق",
+    "ك": "ك",
+    "ﻙ": "ك",
+    "ﻚ": "ك",
+    "ﻛ": "ك",
+    "ﻜ": "ك",
+    "ل": "ل",
+    "ﻝ": "ل",
+    "ﻞ": "ل",
+    "ﻟ": "ل",
+    "ﻠ": "ل",
+    "م": "م",
+    "ﻡ": "م",
+    "ﻢ": "م",
+    "ﻣ": "م",
+    "ﻤ": "م",
+    "ن": "ن",
+    "ﻥ": "ن",
+    "ﻦ": "ن",
+    "ﻧ": "ن",
+    "ﻨ": "ن",
+    "ه": "ه",
+    "ﻩ": "ه",
+    "ﻪ": "ه",
+    "ﻫ": "ه",
+    "ﻬ": "ه",
+    "ة": "ه",
+    "ﺓ": "ه",
+    "ﺔ": "ه",
+    "و": "و",
+    "ﻭ": "و",
+    "ﻮ": "و",
+    "ؤ": "و",
+    "ي": "ي",
+    "ﻱ": "ي",
+    "ﻲ": "ي",
+    "ﻳ": "ي",
+    "ﻴ": "ي",
+    "ى": "ي",
+    "ﻯ": "ي",
+    "ﻰ": "ي",
+    "ئ": "ي",
+    "ﻻ": "لا",
+    "ﻼ": "لا",
+    "َ": "َ",
+    "ً": "ً",
+    "ُ": "ُ",
+    "ٌ": "ٌ",
+    "ِ": "ِ",
+    "ٍ": "ٍ",
+    "ْ": "ْ",
+    "ّ": "ّ",
+    "ٰ": "ٰ",
+    "ٓ": "ٓ",
+    "ٔ": "ٔ",
+    "ٕ": "ٕ",
+    "ۖ": "ۖ",
+    "ۗ": "ۗ",
+    "ۘ": "ۘ",
+    "ۙ": "ۙ",
+    "ۚ": "ۚ",
+    "ۛ": "ۛ",
+    "ۜ": "ۜ",
+    "۝": "۝",
+    "۞": "۞",
+    "۩": "۩",
+    "٠": "٠",
+    "١": "١",
+    "٢": "٢",
+    "٣": "٣",
+    "٤": "٤",
+    "٥": "٥",
+    "٦": "٦",
+    "٧": "٧",
+    "٨": "٨",
+    "٩": "٩"
+  }
+}

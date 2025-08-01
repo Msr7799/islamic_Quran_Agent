@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "generated_at": "2025-07-29T06:24:25.285814",
+    "total_ayat": 7,
+    "script_version": "2.0",
+    "description": "إحداثيات الآيات مستخرجة من SVG/PDF"
+  },
+  "results": [
+    {
+      "page": 1,
+      "sura": 1,
+
+
+
+
+      "aya_no": 1,
+      "text_uthmani": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ ﰀ",
+      "text_extracted": "بٱلِٱلهرحٱلهرِحيِم١",
+      "similarity": 0.55,
+
+
+
+
+      "bbox": [
+        212.93,
+        107.81995,
+        359.92997,
+
+
+
+
+        142.29999
+      ],
+      "source": "svg",
+      "detected_verse_number": 1,
+      "verse_number_match": true
+
+
+
+
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 2,
+      "text_uthmani": "ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ ﰁ",
+      "text_extracted": "ٱلحمدِلِرِبٱلعَلِمين٢",
+      "similarity": 0.676,
+      "bbox": [
+        211.49,
+        150.53998,
+        379.72999,
+        184.18006
+      ],
+      "source": "svg",
+      "detected_verse_number": 2,
+      "verse_number_match": true
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 3,
+      "text_uthmani": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ ﰂ",
+      "text_extracted": "ٱلرحٱلرِحيِم٣ملِِكيوِمٱلِديِن٤",
+      "similarity": 0.455,
+      "bbox": [
+        177.65,
+        191.70001,
+        413.47,
+        225.21997
+      ],
+      "source": "svg",
+      "detected_verse_number": 4,
+      "verse_number_match": false
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 4,
+      "text_uthmani": "مَٰلِكِ يَوۡمِ ٱلدِّينِ ﰃ",
+      "text_extracted": "َولاٱلضالِين٧",
+      "similarity": 0.311,
+      "bbox": [
+        247.01,
+        339.33,
+        342.16999,
+        373.44999
+      ],
+      "source": "svg",
+      "detected_verse_number": 7,
+      "verse_number_match": false
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 5,
+      "text_uthmani": "إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ ﰄ",
+      "text_extracted": "إِياكنعبدوإياكنستِعين٥ٱهِدنا",
+      "similarity": 0.717,
+      "bbox": [
+        187.37,
+        232.38,
+        404.10993,
+        259.90003
+      ],
+      "source": "svg",
+      "detected_verse_number": 5,
+      "verse_number_match": true
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 6,
+      "text_uthmani": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ ﰅ",
+      "text_extracted": "ٱلِصرَطٱلمستِقيَم٦ِصرَطٱلِذيَنأنعمت",
+      "similarity": 0.563,
+      "bbox": [
+        161.06002,
+        262.16999,
+        430.1499,
+        297.13
+      ],
+      "source": "svg",
+      "detected_verse_number": 6,
+      "verse_number_match": true
+    },
+    {
+      "page": 1,
+      "sura": 1,
+      "aya_no": 7,
+      "text_uthmani": "صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ ﰆ",
+      "text_extracted": "عليِهمغيِرٱلمغضوِبعليِهم",
+      "similarity": 0.358,
+      "bbox": [
+        202.73,
+        309.80995,
+        381.77006,
+        340.20997
+      ],
+      "source": "svg",
+      "detected_verse_number": null,
+      "verse_number_match": false
+    }
+  ]
+}
