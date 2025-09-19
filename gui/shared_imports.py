@@ -22,10 +22,11 @@ from PyQt5.QtWidgets import (
     QGroupBox, QRadioButton, QTextBrowser, QSpinBox, QCheckBox, QProgressBar, 
     QFileDialog, QScrollArea, QSizePolicy, QSpacerItem, QMainWindow, QTextEdit, 
     QApplication, QTabWidget, QTreeWidget, QTreeWidgetItem, QStatusBar, 
-    QLineEdit, QAction, QDialogButtonBox, QAbstractItemView
+    QLineEdit, QAction, QDialogButtonBox, QAbstractItemView, QFrame, QHeaderView
 )
-from PyQt5.QtCore import Qt, QTimer, QDateTime, QEvent
-from PyQt5.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
+from PyQt5.QtCore import Qt, QTimer, QDateTime, QEvent, QPropertyAnimation
+from PyQt5.QtGui import QColor, QFont, QTextCharFormat, QTextCursor, QIcon, QPixmap, QKeySequence
+from PyQt5.QtWidgets import QShortcut, QMenu, QGraphicsOpacityEffect, QStyle
 
 # Data processing imports
 import pandas as pd
@@ -219,16 +220,16 @@ except ImportError:
     NO_FILE_SELECTED = "لم يتم تحديد ملف"
     COMPARE_TEXTS_TITLE = "مقارنة النصوص"
 
-# محاولة استيراد المكونات الإضافية - نفس الكود الحالي
+# محاولة استيراد المكونات الإضافية - OpenRouter
 try:
-    from Agent.groq_chat_manager import GroqChatManager
+    from Agent.openrouter_chat_manager import OpenRouterChatManager
     from Agent.chat_history_manager import ChatHistoryManager
-    GROQ_AVAILABLE = True
+    OPENROUTER_AVAILABLE = True
 except ImportError:
     print("⚠️ مكونات الذكاء الاصطناعي غير متوفرة")
-    GroqChatManager = None
+    OpenRouterChatManager = None
     ChatHistoryManager = None
-    GROQ_AVAILABLE = False
+    OPENROUTER_AVAILABLE = False
 
 try:
     import sqlite3

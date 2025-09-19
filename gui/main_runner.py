@@ -22,7 +22,7 @@ app = QApplication(sys.argv)
 
 # الاستيرادات الأساسية (بعد إنشاء QApplication)
 import shared_imports
-from main_window import QuranTextAnalyzer
+from main_window import QuranAnalysisMainWindow
 
 
 def setup_environment():
@@ -32,14 +32,14 @@ def setup_environment():
     # المسار الصحيح لمجلد gui
     gui_dir = Path(__file__).parent
     
-    # التحقق من الملفات المطلوبة في مجلد gui
+    # التحقق من الملفات المطلوبة في مجلد gui (محدث للواجهة الجديدة)
     required_files = [
         gui_dir / 'shared_imports.py',
         gui_dir / 'data_models.py', 
         gui_dir / 'analysis_widgets.py',
-        gui_dir / 'svg_comparison_tools.py',
+        gui_dir / 'complete_chat_window.py',
         gui_dir / 'main_window.py',
-        gui_dir / 'ui_settings.py'
+        gui_dir / 'Agent' / 'openrouter_chat_manager.py'
     ]
     
     missing_files = []
@@ -63,9 +63,10 @@ def check_dependencies():
         'PyQt5': 'PyQt5',
         'pandas': 'pandas',
         'numpy': 'numpy', 
-        'arabic_reshaper': 'arabic-reshaper',
-        'bidi': 'python-bidi',
-        'markdown': 'markdown'
+        'requests': 'requests',
+        'pathlib': None,  # مدمج في Python 3.4+
+        'json': None,     # مدمج في Python
+        'datetime': None  # مدمج في Python
     }
     
     missing_packages = []
@@ -96,31 +97,35 @@ def check_dependencies():
 
 
 def create_directories():
-    """إنشاء المجلدات المطلوبة في GUI_DATA"""
-    # المسار الصحيح للمجلدات في GUI_DATA
-    base_dir = Path(__file__).parent.parent / "GUI_DATA"
+    """إنشاء المجلدات المطلوبة للنظام الجديد"""
+    # المسار الأساسي للمشروع
+    base_dir = Path(__file__).parent.parent
     
-    directories = [
-        base_dir / 'logs',
-        base_dir / 'exports', 
-        base_dir / 'temp',
-        base_dir / 'user_data',
-        base_dir / 'cache',
-        base_dir / 'reports'
+    # التأكد من وجود مجلدات البيانات الأساسية
+    data_directories = [
+        base_dir / 'Uthmanic_data',
+        base_dir / 'Uthmanic_font',
+        base_dir / 'GUI_DATA',
+        base_dir / 'GUI_DATA' / 'exports',
+        base_dir / 'GUI_DATA' / 'temp',
+        base_dir / 'GUI_DATA' / 'cache'
     ]
     
-    for directory in directories:
-        directory.mkdir(parents=True, exist_ok=True)
-        print(f"📁 مجلد {directory.name} جاهز في GUI_DATA")
+    for directory in data_directories:
+        if not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+            print(f"📁 تم إنشاء مجلد: {directory.name}")
+        else:
+            print(f"✅ مجلد موجود: {directory.name}")
     
-    print(f"✅ جميع المجلدات جاهزة في: {base_dir}")
+    print(f"✅ جميع المجلدات جاهزة في المشروع")
 
 
 def main():
     """الدالة الرئيسية لتشغيل التطبيق"""
     global app
     
-    print("🚀 بدء تشغيل محلل النصوص القرآنية المتقدم")
+    print("🚀 بدء تشغيل محلل النصوص القرآنية المتقدم - إصدار OpenRouter")
     print("=" * 50)
     
     # التحقق من البيئة
@@ -138,10 +143,10 @@ def main():
     
     try:
         # إعداد خصائص التطبيق (app تم إنشاؤه في البداية)
-        app.setApplicationName("محلل النصوص القرآنية المتقدم")
-        app.setApplicationVersion("2.0")
-        app.setOrganizationName("Quran Text Analyzer")
-        app.setApplicationDisplayName("🕌 محلل النصوص القرآنية")
+        app.setApplicationName("محلل النصوص القرآنية المتقدم - OpenRouter")
+        app.setApplicationVersion("2.0-OpenRouter")
+        app.setOrganizationName("Quran Analysis Suite")
+        app.setApplicationDisplayName("🕌 محلل النصوص القرآنية - إصدار OpenRouter")
         
         # تحسين الأداء والمظهر
         app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -150,31 +155,62 @@ def main():
         # تطبيق ستايل موحد (Fusion للمظهر الاحترافي)
         app.setStyle('Fusion')
         
+        # تحميل وتطبيق الخط العثماني
+        from PyQt5.QtGui import QFontDatabase
+        font_db = QFontDatabase()
+        
+        # تحميل الخط العثماني
+        uthmanic_font_path = os.path.join(os.path.dirname(__file__), '..', 'Uthmanic_font', 'uthmanic_hafs-Font.ttf')
+        if os.path.exists(uthmanic_font_path):
+            font_id = font_db.addApplicationFont(uthmanic_font_path)
+            if font_id != -1:
+                font_families = font_db.applicationFontFamilies(font_id)
+                if font_families:
+                    uthmanic_font_family = font_families[0]
+                    print(f"✅ تم تحميل الخط العثماني: {uthmanic_font_family}")
+                    
+                    # تعيين الخط العثماني كخط افتراضي للتطبيق
+                    from PyQt5.QtGui import QFont
+                    app_font = QFont(uthmanic_font_family, 14)
+                    app.setFont(app_font)
+                else:
+                    print("⚠️ لم يتم العثور على عائلة الخط العثماني")
+            else:
+                print("⚠️ فشل في تحميل الخط العثماني")
+        else:
+            print(f"⚠️ ملف الخط العثماني غير موجود: {uthmanic_font_path}")
+        
         print("✅ تم إنشاء تطبيق PyQt5 بنجاح")
         
-        # إنشاء النافذة الرئيسية
-        print("🖥️ إنشاء النافذة الرئيسية...")
-        main_window = QuranTextAnalyzer()
+        # إنشاء النافذة الرئيسية الجديدة مع الواجهات المحدثة
+        print("🖥️ إنشاء النافذة الرئيسية مع الواجهات الجديدة...")
+        main_window = QuranAnalysisMainWindow()
         
         # عرض النافذة
         main_window.show()
         
-        print("✅ تم عرض النافذة الرئيسية")
-        print("🎉 محلل النصوص القرآنية جاهز للاستخدام!")
-        print("=" * 50)
+        print("✅ تم عرض النافذة الرئيسية الجديدة")
+        print("🎉 محلل النصوص القرآنية - إصدار OpenRouter جاهز للاستخدام!")
+        print("=" * 60)
         
         # معلومات إضافية للمستخدم
-        print("\n📖 نصائح الاستخدام:")
-        print("  • استخدم Ctrl+T لفتح الشات الذكي")
-        print("  • استخدم F5 للتحليل السريع")
-        print("  • استخدم Ctrl+O لفتح ملف نصي")
-        print("  • استخدم Ctrl+S لحفظ النتائج")
-        print("  • تصفح التبويبات لاستكشاف جميع الميزات")
+        print("\n📖 الميزات الجديدة في إصدار OpenRouter:")
+        print("  • 💬 شات احترافي مع نماذج ذكية متعددة")
+        print("  • 📖 عارض بيانات القرآن التفاعلي")
+        print("  • 📁 دعم تنسيقات متعددة للبيانات")
+        print("  • 🔤 تحليل متقدم للخط العثماني")
+        print("  • ⚡ واجهة محسنة وسريعة")
+        print("\n🎯 الاختصارات السريعة:")
+        print("  • Ctrl+T → فتح الشات الاحترافي")
+        print("  • F5 → الانتقال للتحليل السريع")
+        print("  • Ctrl+O → فتح ملف نصي")
+        print("  • Ctrl+S → حفظ النتائج")
+        print("  • تصفح التبويبات لاستكشاف جميع الميزات الجديدة")
         
         # تشغيل التطبيق
         exit_code = app.exec_()
         
-        print("\n👋 شكراً لاستخدام محلل النصوص القرآنية")
+        print("\n👋 شكراً لاستخدام محلل النصوص القرآنية - إصدار OpenRouter")
         sys.exit(exit_code)
         
     except Exception as e:

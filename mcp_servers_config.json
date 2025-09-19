@@ -1,0 +1,18 @@
+{
+    "tavily": {
+        "name": "Tavily Search",
+        "description": "البحث في الإنترنت باستخدام Tavily",
+        "enabled": true,
+        "type": "built-in",
+        "config": {
+            "api_key_env": "TAVILY_API_KEY"
+        }
+    },
+    "time-mcp": {
+        "name": "Time MCP",
+        "description": "أدوات التاريخ والوقت",
+        "enabled": true,
+        "type": "built-in",
+        "config": {}
+    }
+}
