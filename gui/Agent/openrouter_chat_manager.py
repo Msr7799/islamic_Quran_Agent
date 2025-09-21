@@ -134,47 +134,93 @@ class OpenRouterChatManager:
         self._add_system_message()
         
     def _load_free_models(self) -> Dict[str, Dict[str, Any]]:
-        """تحميل النماذج المجانية من ملف CSV"""
+        """تحميل النماذج المجانية الـ54 من ملف Markdown المحدث"""
         models = {}
-        csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
-                               'openrouter_free_models_snapshot.csv')
+        
+        # قائمة النماذج المجانية الـ54 الجديدة المحدثة من OpenRouter
+        free_models_data = [
+            # النماذج بالترتيب الجديد من 1-54
+            {"model_id": "x-ai/grok-4-fast:free", "name": "xAI: Grok 4 Fast", "context": 2000000},
+            {"model_id": "nvidia/nemotron-nano-9b-v2:free", "name": "NVIDIA: Nemotron Nano 9B V2", "context": 128000},
+            {"model_id": "deepseek/deepseek-chat-v3.1:free", "name": "DeepSeek: DeepSeek V3.1", "context": 163840},
+            {"model_id": "openai/gpt-oss-20b:free", "name": "OpenAI: gpt-oss-20b", "context": 131072},
+            {"model_id": "z-ai/glm-4.5-air:free", "name": "Z.AI: GLM 4.5 Air", "context": 131072},
+            {"model_id": "qwen/qwen3-coder:free", "name": "Qwen: Qwen3 Coder 480B A35B", "context": 262144},
+            {"model_id": "moonshotai/kimi-k2:free", "name": "MoonshotAI: Kimi K2 0711", "context": 32768},
+            {"model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free", "name": "Venice: Uncensored", "context": 32768},
+            {"model_id": "google/gemma-3n-e2b-it:free", "name": "Google: Gemma 3n 2B", "context": 8192},
+            {"model_id": "tencent/hunyuan-a13b-instruct:free", "name": "Tencent: Hunyuan A13B Instruct", "context": 32768},
+            {"model_id": "tngtech/deepseek-r1t2-chimera:free", "name": "TNG: DeepSeek R1T2 Chimera", "context": 163840},
+            {"model_id": "mistralai/mistral-small-3.2-24b-instruct:free", "name": "Mistral: Mistral Small 3.2 24B", "context": 131072},
+            {"model_id": "moonshotai/kimi-dev-72b:free", "name": "MoonshotAI: Kimi Dev 72B", "context": 131072},
+            {"model_id": "deepseek/deepseek-r1-0528-qwen3-8b:free", "name": "DeepSeek: Deepseek R1 0528 Qwen3 8B", "context": 131072},
+            {"model_id": "deepseek/deepseek-r1-0528:free", "name": "DeepSeek: R1 0528", "context": 163840},
+            {"model_id": "mistralai/devstral-small-2505:free", "name": "Mistral: Devstral Small 2505", "context": 32768},
+            {"model_id": "google/gemma-3n-e4b-it:free", "name": "Google: Gemma 3n 4B", "context": 8192},
+            {"model_id": "meta-llama/llama-3.3-8b-instruct:free", "name": "Meta: Llama 3.3 8B Instruct", "context": 128000},
+            {"model_id": "qwen/qwen3-4b:free", "name": "Qwen: Qwen3 4B", "context": 40960},
+            {"model_id": "qwen/qwen3-30b-a3b:free", "name": "Qwen: Qwen3 30B A3B", "context": 40960},
+            {"model_id": "qwen/qwen3-8b:free", "name": "Qwen: Qwen3 8B", "context": 40960},
+            {"model_id": "qwen/qwen3-14b:free", "name": "Qwen: Qwen3 14B", "context": 40960},
+            {"model_id": "qwen/qwen3-235b-a22b:free", "name": "Qwen: Qwen3 235B A22B", "context": 131072},
+            {"model_id": "tngtech/deepseek-r1t-chimera:free", "name": "TNG: DeepSeek R1T Chimera", "context": 163840},
+            {"model_id": "microsoft/mai-ds-r1:free", "name": "Microsoft: MAI DS R1", "context": 163840},
+            {"model_id": "shisa-ai/shisa-v2-llama3.3-70b:free", "name": "Shisa AI: Shisa V2 Llama 3.3 70B", "context": 32768},
+            {"model_id": "arliai/qwq-32b-arliai-rpr-v1:free", "name": "ArliAI: QwQ 32B RpR v1", "context": 32768},
+            {"model_id": "agentica-org/deepcoder-14b-preview:free", "name": "Agentica: Deepcoder 14B Preview", "context": 96000},
+            {"model_id": "moonshotai/kimi-vl-a3b-thinking:free", "name": "MoonshotAI: Kimi VL A3B Thinking", "context": 131072},
+            {"model_id": "meta-llama/llama-4-maverick:free", "name": "Meta: Llama 4 Maverick", "context": 128000},
+            {"model_id": "meta-llama/llama-4-scout:free", "name": "Meta: Llama 4 Scout", "context": 128000},
+            {"model_id": "qwen/qwen2.5-vl-32b-instruct:free", "name": "Qwen: Qwen2.5 VL 32B Instruct", "context": 8192},
+            {"model_id": "deepseek/deepseek-chat-v3-0324:free", "name": "DeepSeek: DeepSeek V3 0324", "context": 163840},
+            {"model_id": "mistralai/mistral-small-3.1-24b-instruct:free", "name": "Mistral: Mistral Small 3.1 24B", "context": 128000},
+            {"model_id": "google/gemma-3-4b-it:free", "name": "Google: Gemma 3 4B", "context": 32768},
+            {"model_id": "google/gemma-3-12b-it:free", "name": "Google: Gemma 3 12B", "context": 32768},
+            {"model_id": "google/gemma-3-27b-it:free", "name": "Google: Gemma 3 27B", "context": 96000},
+            {"model_id": "qwen/qwq-32b:free", "name": "Qwen: QwQ 32B", "context": 32768},
+            {"model_id": "nousresearch/deephermes-3-llama-3-8b-preview:free", "name": "Nous: DeepHermes 3 Llama 3 8B Preview", "context": 131072},
+            {"model_id": "cognitivecomputations/dolphin3.0-r1-mistral-24b:free", "name": "Dolphin3.0 R1 Mistral 24B", "context": 32768},
+            {"model_id": "cognitivecomputations/dolphin3.0-mistral-24b:free", "name": "Dolphin3.0 Mistral 24B", "context": 32768},
+            {"model_id": "qwen/qwen2.5-vl-72b-instruct:free", "name": "Qwen: Qwen2.5 VL 72B Instruct", "context": 32768},
+            {"model_id": "mistralai/mistral-small-24b-instruct-2501:free", "name": "Mistral: Mistral Small 3", "context": 32768},
+            {"model_id": "deepseek/deepseek-r1-distill-llama-70b:free", "name": "DeepSeek: R1 Distill Llama 70B", "context": 8192},
+            {"model_id": "deepseek/deepseek-r1:free", "name": "DeepSeek: R1", "context": 163840},
+            {"model_id": "google/gemini-2.0-flash-exp:free", "name": "Google: Gemini 2.0 Flash Experimental", "context": 1048576},
+            {"model_id": "meta-llama/llama-3.3-70b-instruct:free", "name": "Meta: Llama 3.3 70B Instruct", "context": 65536},
+            {"model_id": "qwen/qwen-2.5-coder-32b-instruct:free", "name": "Qwen2.5 Coder 32B Instruct", "context": 32768},
+            {"model_id": "meta-llama/llama-3.2-3b-instruct:free", "name": "Meta: Llama 3.2 3B Instruct", "context": 131072},
+            {"model_id": "qwen/qwen-2.5-72b-instruct:free", "name": "Qwen2.5 72B Instruct", "context": 32768},
+            {"model_id": "meta-llama/llama-3.1-405b-instruct:free", "name": "Meta: Llama 3.1 405B Instruct", "context": 65536},
+            {"model_id": "mistralai/mistral-nemo:free", "name": "Mistral: Mistral Nemo", "context": 131072},
+            {"model_id": "google/gemma-2-9b-it:free", "name": "Google: Gemma 2 9B", "context": 8192},
+            {"model_id": "mistralai/mistral-7b-instruct:free", "name": "Mistral: Mistral 7B Instruct", "context": 32768}
+        ]
         
         try:
-            if os.path.exists(csv_path):
-                df = pd.read_csv(csv_path)
-                for _, row in df.iterrows():
-                    models[row['model_id']] = {
-                        "name": row['display_name'],
-                        "vendor": row['vendor'],
-                        "params": row['params'],
-                        "context": row['context_window'],
-                        "modalities": row['modalities'],
-                        "description": row.get('notes', ''),
-                        "pricing_input": row['pricing_input_per_million'],
-                        "pricing_output": row['pricing_output_per_million']
-                    }
-                self.logger.info(f"✅ تم تحميل {len(models)} نموذج مجاني من OpenRouter")
-            else:
-                # نماذج احتياطية إذا لم يوجد الملف
-                models = {
-                    "qwen/qwen3-4b:free": {
-                        "name": "Qwen3 4B (free)",
-                        "vendor": "Qwen",
-                        "params": "4B",
-                        "context": "~96K",
-                        "modalities": "text",
-                        "description": "Entry-level Qwen3 open variant"
-                    }
+            for model_data in free_models_data:
+                model_id = model_data["model_id"]
+                models[model_id] = {
+                    "name": model_data["name"],
+                    "vendor": model_data["name"].split(":")[0],
+                    "params": "Free Tier",
+                    "context": model_data["context"],
+                    "modalities": "text",
+                    "description": f"Free tier model - {model_data['context']} context window",
+                    "pricing_input": 0.0,
+                    "pricing_output": 0.0
                 }
-                self.logger.warning("⚠️ لم يتم العثور على ملف CSV، استخدام نماذج افتراضية")
+            
+            self.logger.info(f"✅ تم تحميل {len(models)} نموذج مجاني من OpenRouter")
+            
         except Exception as e:
             self.logger.error(f"خطأ في تحميل النماذج: {e}")
+            # نموذج احتياطي واحد
             models = {
                 "qwen/qwen3-4b:free": {
-                    "name": "Qwen3 4B (free)",
-                    "vendor": "Qwen", 
-                    "params": "4B",
-                    "context": "96K",
+                    "name": "Qwen: Qwen3 4B",
+                    "vendor": "Qwen",
+                    "params": "4B", 
+                    "context": 40960,
                     "modalities": "text",
                     "description": "Entry-level Qwen3 variant"
                 }
@@ -332,17 +378,69 @@ class OpenRouterChatManager:
         """الحصول على قائمة الأدوات المتاحة للنموذج"""
         return list(self.mcp_tools.values())
 
+    def test_api_keys(self) -> Dict[str, bool]:
+        """اختبار صحة مفاتيح API"""
+        results = {"primary": False, "fallback": False}
+        
+        # اختبار المفتاح الأساسي
+        if self.primary_api_key:
+            try:
+                test_headers = {
+                    "Authorization": f"Bearer {self.primary_api_key}",
+                    "Content-Type": "application/json"
+                }
+                response = requests.get("https://openrouter.ai/api/v1/models", 
+                                      headers=test_headers, timeout=10)
+                results["primary"] = response.status_code == 200
+                if results["primary"]:
+                    self.logger.info("✅ المفتاح الأساسي يعمل بشكل صحيح")
+                else:
+                    self.logger.warning("⚠️ المفتاح الأساسي لا يعمل")
+            except Exception as e:
+                self.logger.error(f"خطأ في اختبار المفتاح الأساسي: {e}")
+        
+        # اختبار المفتاح الاحتياطي
+        if self.fallback_api_key:
+            try:
+                test_headers = {
+                    "Authorization": f"Bearer {self.fallback_api_key}",
+                    "Content-Type": "application/json"
+                }
+                response = requests.get("https://openrouter.ai/api/v1/models", 
+                                      headers=test_headers, timeout=10)
+                results["fallback"] = response.status_code == 200
+                if results["fallback"]:
+                    self.logger.info("✅ المفتاح الاحتياطي يعمل بشكل صحيح")
+                else:
+                    self.logger.warning("⚠️ المفتاح الاحتياطي لا يعمل")
+            except Exception as e:
+                self.logger.error(f"خطأ في اختبار المفتاح الاحتياطي: {e}")
+        
+        return results
+
     def get_available_models(self) -> Dict[str, Dict[str, Any]]:
         """الحصول على قائمة النماذج المتاحة"""
         return self.available_models.copy()
         
     def set_model(self, model: str):
-        """تغيير النموذج المستخدم"""
+        """تغيير النموذج المستخدم مع التحقق من صحته"""
         if model not in self.available_models:
-            raise ValueError(f"النموذج {model} غير متاح")
+            self.logger.warning(f"⚠️ النموذج {model} غير متوفر في القائمة المجانية")
+            # استخدام النموذج الافتراضي إذا كان النموذج المطلوب غير متوفر
+            if "qwen/qwen3-4b:free" in self.available_models:
+                model = "qwen/qwen3-4b:free"
+                self.logger.info("تم استخدام النموذج الافتراضي: qwen/qwen3-4b:free")
+            else:
+                # استخدام أول نموذج متاح
+                model = list(self.available_models.keys())[0]
+                self.logger.info(f"تم استخدام أول نموذج متاح: {model}")
             
         self.config.model = model
         self.logger.info(f"تم تغيير النموذج إلى: {model}")
+        
+        # إعادة تعيين المفتاح الأساسي عند تغيير النموذج
+        if self.primary_api_key:
+            self.current_api_key = self.primary_api_key
 
     def _add_system_message(self):
         """إضافة رسالة النظام الأولية مع دعم البيانات القرآنية"""
@@ -388,7 +486,7 @@ class OpenRouterChatManager:
         return [asdict(msg) for msg in self.messages]
 
     def _make_api_request(self, messages: List[Dict[str, str]], use_stream: bool = False) -> Any:
-        """إرسال طلب لـ OpenRouter API"""
+        """إرسال طلب لـ OpenRouter API مع دعم fallback"""
         url = "https://openrouter.ai/api/v1/chat/completions"
         
         headers = {
@@ -412,36 +510,45 @@ class OpenRouterChatManager:
         
         if available_tools:
             data["tools"] = available_tools
-            data["tool_choice"] = "auto"
         
+        # محاولة الطلب مع المفتاح الحالي
         try:
-            response = requests.post(url, headers=headers, json=data, stream=use_stream)
+            response = requests.post(url, json=data, headers=headers, 
+                                   stream=use_stream, timeout=60)
             
-            if response.status_code != 200:
-                raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
-                
-            return response
-            
-        except Exception as e:
-            # محاولة استخدام API احتياطي عند الفشل
-            if self.current_api_key == self.primary_api_key and self.fallback_api_key:
-                self.logger.warning(f"فشل المفتاح الأساسي: {e}. جاري التبديل للمفتاح الاحتياطي...")
+            # إذا فشل المفتاح الأساسي، جرب المفتاح الاحتياطي
+            if response.status_code == 401 and self.current_api_key == self.primary_api_key and self.fallback_api_key:
+                self.logger.warning("⚠️ فشل المفتاح الأساسي، جاري تجربة المفتاح الاحتياطي...")
                 self.current_api_key = self.fallback_api_key
                 headers["Authorization"] = f"Bearer {self.current_api_key}"
                 
+                response = requests.post(url, json=data, headers=headers, 
+                                       stream=use_stream, timeout=60)
+                
+                if response.status_code == 200:
+                    self.logger.info("✅ تم الاتصال بنجاح باستخدام المفتاح الاحتياطي")
+            
+            response.raise_for_status()
+            return response
+            
+        except requests.exceptions.RequestException as e:
+            # إذا فشل الطلب تماماً وكان لدينا مفتاح احتياطي لم نجربه
+            if self.current_api_key == self.primary_api_key and self.fallback_api_key:
                 try:
-                    response = requests.post(url, headers=headers, json=data, stream=use_stream)
-                    if response.status_code != 200:
-                        raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+                    self.logger.warning("⚠️ فشل الاتصال، جاري تجربة المفتاح الاحتياطي...")
+                    self.current_api_key = self.fallback_api_key
+                    headers["Authorization"] = f"Bearer {self.current_api_key}"
                     
-                    self.logger.info("تم التبديل للمفتاح الاحتياطي بنجاح")
+                    response = requests.post(url, json=data, headers=headers, 
+                                           stream=use_stream, timeout=60)
+                    response.raise_for_status()
+                    self.logger.info("✅ تم الاتصال بنجاح باستخدام المفتاح الاحتياطي")
                     return response
-                    
-                except Exception as fallback_error:
-                    self.logger.error(f"فشل كلا المفتاحين: {fallback_error}")
-                    raise Exception(f"فشل في كلا API keys: الأساسي ({e}) والاحتياطي ({fallback_error})")
-            else:
-                raise e
+                except:
+                    pass
+            
+            self.logger.error(f"خطأ في طلب API: {e}")
+            raise
 
     def get_response(self, user_input: str, context: Optional[List[Dict]] = None,
                     stream: Optional[bool] = None) -> str:

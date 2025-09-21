@@ -1001,21 +1001,23 @@ class QuranAnalysisMainWindow(QMainWindow):
         open_chat_btn = QPushButton("🚀 فتح الشات الاحترافي")
         open_chat_btn.setStyleSheet("""
             QPushButton {
-                font-size: 16px;
+                font-size: 55px;
+                align-items: center;
+                justify-content: center;
                 font-weight: bold;
                 padding: 15px 30px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: #764ba2;
                 color: white;
-                border: none;
+                border: solid 2px #5a67d8;
                 border-radius: 25px;
                 margin: 20px;
             }
             QPushButton:hover {
-                background: linear-gradient(135deg, #5a67d8 0%, #6b5b95 100%);
+                background: #5a67d8;
                 transform: scale(1.05);
             }
             QPushButton:pressed {
-                background: linear-gradient(135deg, #4c51bf 0%, #553c7b 100%);
+                background: #4c51bf;
             }
         """)
         open_chat_btn.clicked.connect(self.open_professional_chat)

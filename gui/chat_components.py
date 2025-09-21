@@ -49,7 +49,7 @@ class ChatHistoryDialog(QDialog):
             QListWidget {
                 border: 2px solid #ddd;
                 border-radius: 10px;
-                background-color: white;
+                background-color: #444;
                 font-family: 'Arial Unicode MS', 'Tahoma';
                 font-size: 14px;
             }
@@ -58,11 +58,11 @@ class ChatHistoryDialog(QDialog):
                 border-bottom: 1px solid #eee;
             }
             QListWidget::item:selected {
-                background-color: #5994A4;
-                color: white;
+                background-color: rgba(61, 105, 255, 175);
+                color: #333;
             }
             QListWidget::item:hover {
-                background-color: #f0f0f0;
+                background-color: rgba(61, 105, 255, 223);
             }
         """)
         self.sessions_list.itemDoubleClicked.connect(self.on_session_double_clicked)

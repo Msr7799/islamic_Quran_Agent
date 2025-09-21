@@ -171,12 +171,26 @@ if MATPLOTLIB_QT_AVAILABLE and plt:
     plt.rcParams['font.family'] = ['Arial Unicode MS', 'Tahoma', 'DejaVu Sans']
 
 # استيراد إعدادات واجهة المستخدم المحسنة للشاشات الكبيرة
-from ui_settings import (
-    get_theme_settings, get_font_size, get_font_family,
-    get_all_themes, get_all_font_sizes, get_all_font_families,
-    create_stylesheet, WINDOW_SETTINGS, get_font_size_range,
-    QUICK_FONT_SIZES
-)
+try:
+    from ui_settings import (
+        get_theme_settings, get_font_size, get_font_family,
+        get_all_themes, get_all_font_sizes, get_all_font_families,
+        create_stylesheet, WINDOW_SETTINGS, get_font_size_range,
+        QUICK_FONT_SIZES
+    )
+except ImportError:
+    print("⚠️ تحذير: إعدادات واجهة المستخدم غير متوفرة")
+    # قيم افتراضية
+    def get_font_size(): return 11
+    def get_font_family(): return "Arial"
+    def get_theme_settings(): return {}
+    def get_all_themes(): return ["الوضع النهاري"]
+    def get_all_font_sizes(): return [10, 12, 14]
+    def get_all_font_families(): return ["Arial"]
+    def create_stylesheet(): return ""
+    WINDOW_SETTINGS = {}
+    def get_font_size_range(): return (8, 20)
+    QUICK_FONT_SIZES = [10, 12, 14]
 
 # استيراد الثوابت المشتركة - نفس المعالجة الحالية
 try:

@@ -5,7 +5,7 @@
 مجلد Agent - مكونات الذكاء الاصطناعي
 """
 
-from .groq_chat_manager import GroqChatManager
+from .openrouter_chat_manager import OpenRouterChatManager, ChatConfig
 from .chat_history_manager import ChatHistoryManager, ChatMessage, ChatSession
 from .quran_api_manager import QuranComplexAPI
 from .ai_analyzer import AIAnalyzer
@@ -16,7 +16,8 @@ from .font_manager import AdvancedFontManager
 # أضف فقط ما تحتاجه فعلاً
 
 __all__ = [
-    'GroqChatManager',
+    'OpenRouterChatManager',
+    'ChatConfig',
     'ChatHistoryManager',
     'ChatMessage',
     'ChatSession',
@@ -29,4 +30,4 @@ __all__ = [
     'AdvancedFontManager'
 ]
 
-print("✅ تم تحميل مكونات Agent بنجاح")
+print("✅ تم تحميل مكونات Agent بنجاح (مع OpenRouter)")

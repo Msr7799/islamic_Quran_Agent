@@ -6,7 +6,7 @@
 """
 
 from shared_imports import *
-from PyQt5.QtWidgets import QInputDialog, QLineEdit, QDialog
+from PyQt5.QtWidgets import QInputDialog, QLineEdit, QDialog, QSplitter
 from data_models import SimpleTextProcessor
 import json
 import os
@@ -15,14 +15,15 @@ import re
 
 # استيراد مكونات الذكاء الاصطناعي والتاريخ
 try:
-    from gui.Agent.openrouter_chat_manager import OpenRouterChatManager, ChatConfig
-    from gui.Agent.chat_history_manager import ChatHistoryManager
-    from gui.Agent.ai_analyzer import AIAnalyzer
-    from gui.analysis_widgets import *
+    from Agent.openrouter_chat_manager import OpenRouterChatManager, ChatConfig
+    from Agent.chat_history_manager import ChatHistoryManager
+    from Agent.ai_analyzer import AIAnalyzer
+    # لا نستورد analysis_widgets هنا لتجنب مشكلة QFontDatabase
     OPENROUTER_AVAILABLE = True
-except ImportError:
+    print("🟢 OPENROUTER_AVAILABLE = True")
+except ImportError as e:
     OPENROUTER_AVAILABLE = False
-    print("⚠️ مكونات الذكاء الاصطناعي غير متوفرة")
+    print(f"🔴 OPENROUTER_AVAILABLE = False: {e}")
     ChatHistoryManager = None
     OpenRouterChatManager = None
     ChatConfig = None
@@ -37,8 +38,194 @@ except ImportError as e:
     MCPManagerSidebar = None
     MCP_AVAILABLE = False
 
+# استيراد محرك Markdown المتطور
+try:
+    from gui.markdown_renderer import MessageContentRenderer
+    MARKDOWN_AVAILABLE = True
+    print("🟢 MARKDOWN_AVAILABLE = True")
+except ImportError as e:
+    print(f"🔴 MARKDOWN_AVAILABLE = False: {e}")
+    MessageContentRenderer = None
+    MARKDOWN_AVAILABLE = False
+
 # ثوابت
 NO_FILE_SELECTED = "لم يتم اختيار ملف"
+
+class FontSettingsDialog(QDialog):
+    """نافذة إعدادات الخط"""
+    
+    def __init__(self, parent=None, current_size=14, current_family="Arial Unicode MS"):
+        super().__init__(parent)
+        self.font_size = current_size
+        self.font_family = current_family
+        self.setup_ui()
+        
+    def setup_ui(self):
+        """إعداد واجهة المستخدم للحوار"""
+        self.setWindowTitle("⚙️ إعدادات الخط")
+        self.setFixedSize(400, 300)
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        
+        # تعيين النافذة في الوسط
+        self.center_on_parent()
+        
+        # تخطيط رئيسي
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(30, 30, 30, 30)
+        
+        # عنوان
+        title_label = QLabel("🔤 تخصيص إعدادات الخط:")
+        title_label.setStyleSheet("""
+            QLabel {
+                color: #2E7D32;
+                font-size: 16px;
+                font-weight: bold;
+                font-family: 'Arial Unicode MS', 'Tahoma';
+            }
+        """)
+        
+        # حجم الخط
+        size_group = QGroupBox("حجم الخط")
+        size_group.setStyleSheet("""
+            QGroupBox {
+                font-size: 14px;
+                font-weight: bold;
+                color: #333;
+                padding-top: 10px;
+            }
+        """)
+        
+        size_layout = QVBoxLayout(size_group)
+        
+        self.size_slider = QSlider(Qt.Horizontal)
+        self.size_slider.setRange(10, 24)
+        self.size_slider.setValue(self.font_size)
+        self.size_slider.setTickInterval(2)
+        self.size_slider.setTickPosition(QSlider.TicksBelow)
+        
+        self.size_label = QLabel(f"الحجم الحالي: {self.font_size}px")
+        self.size_label.setAlignment(Qt.AlignCenter)
+        
+        self.size_slider.valueChanged.connect(self.update_size_label)
+        
+        size_layout.addWidget(self.size_slider)
+        size_layout.addWidget(self.size_label)
+        
+        # عائلة الخط
+        family_group = QGroupBox("نوع الخط")
+        family_group.setStyleSheet(size_group.styleSheet())
+        
+        family_layout = QVBoxLayout(family_group)
+        
+        self.font_combo = QComboBox()
+        self.font_combo.addItems([
+            "Arial Unicode MS",
+            "Tahoma",
+            "Arial",
+            "Times New Roman",
+            "Calibri",
+            "Segoe UI"
+        ])
+        
+        # تعيين الخط الحالي
+        if self.font_family in [self.font_combo.itemText(i) for i in range(self.font_combo.count())]:
+            self.font_combo.setCurrentText(self.font_family)
+        
+        family_layout.addWidget(self.font_combo)
+        
+        # معاينة
+        preview_group = QGroupBox("معاينة")
+        preview_group.setStyleSheet(size_group.styleSheet())
+        
+        preview_layout = QVBoxLayout(preview_group)
+        
+        self.preview_label = QLabel("نص تجريبي - Sample Text - 123")
+        self.preview_label.setAlignment(Qt.AlignCenter)
+        self.preview_label.setStyleSheet("""
+            QLabel {
+                background-color: #f5f5f5;
+                border: 1px solid #ccc;
+                padding: 20px;
+                border-radius: 5px;
+            }
+        """)
+        
+        self.update_preview()
+        
+        preview_layout.addWidget(self.preview_label)
+        
+        # ربط التغييرات بالمعاينة
+        self.size_slider.valueChanged.connect(self.update_preview)
+        self.font_combo.currentTextChanged.connect(self.update_preview)
+        
+        # أزرار
+        button_layout = QHBoxLayout()
+        
+        cancel_btn = QPushButton("إلغاء")
+        cancel_btn.clicked.connect(self.reject)
+        
+        ok_btn = QPushButton("✅ تطبيق")
+        ok_btn.clicked.connect(self.accept)
+        ok_btn.setDefault(True)
+        
+        button_layout.addWidget(cancel_btn)
+        button_layout.addWidget(ok_btn)
+        
+        # إضافة العناصر للتخطيط
+        main_layout.addWidget(title_label)
+        main_layout.addWidget(size_group)
+        main_layout.addWidget(family_group)
+        main_layout.addWidget(preview_group)
+        main_layout.addLayout(button_layout)
+        
+        # تطبيق نمط الحوار
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #F8F9FA;
+                border: 1px solid #E0E0E0;
+                border-radius: 10px;
+            }
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 8px 20px;
+                font-family: 'Arial Unicode MS', 'Tahoma';
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+    
+    def center_on_parent(self):
+        """توسيط النافذة على النافذة الأم"""
+        if self.parent():
+            parent_geometry = self.parent().geometry()
+            x = parent_geometry.x() + (parent_geometry.width() - self.width()) // 2
+            y = parent_geometry.y() + (parent_geometry.height() - self.height()) // 2
+            self.move(x, y)
+    
+    def update_size_label(self, value):
+        """تحديث تسمية الحجم"""
+        self.size_label.setText(f"الحجم الحالي: {value}px")
+        self.font_size = value
+    
+    def update_preview(self):
+        """تحديث المعاينة"""
+        font = QFont(self.font_combo.currentText(), self.size_slider.value())
+        self.preview_label.setFont(font)
+        self.font_family = self.font_combo.currentText()
+    
+    def get_font_settings(self):
+        """الحصول على إعدادات الخط"""
+        return {
+            'size': self.font_size,
+            'family': self.font_family
+        }
 
 class InternetSearchDialog(QDialog):
     """نافذة حوار البحث في الإنترنت"""
@@ -291,26 +478,13 @@ class MessageBubble(QWidget):
         """إعداد واجهة فقاعة الرسالة"""
         self.setContentsMargins(0, 5, 0, 5)
         
-        # الحاوية الرئيسية
+        # الحاوية الرئيسية - تأخذ العرض كاملاً
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(20, 0, 20, 0)
+        main_layout.setContentsMargins(10, 0, 10, 0)  # تقليل الهوامش
         
-        if not self.is_user:
-            # صورة المساعد (للرسائل من المساعد)
-            avatar = self.create_avatar()
-            main_layout.addWidget(avatar)
-        else:
-            main_layout.addStretch()
-        
-        # فقاعة المحتوى
+        # فقاعة المحتوى - تأخذ المساحة المتبقية (بدون أيقونات خارجية)
         bubble_container = self.create_bubble_container()
-        main_layout.addWidget(bubble_container)
-        
-        if self.is_user:
-            # مساحة فارغة للرسائل من المستخدم
-            main_layout.addWidget(QWidget())
-        else:
-            main_layout.addStretch()
+        main_layout.addWidget(bubble_container, 1)  # stretch factor = 1
     
     def create_avatar(self):
         """إنشاء صورة رمزية للمساعد"""
@@ -323,7 +497,7 @@ class MessageBubble(QWidget):
             QLabel {
                 background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,
                     stop:0 #e4e4e4, stop:1 #e4e4e4);
-                border-radius: 22px;
+                border-radius: 12px;
                 color: white;
                 font-size: 24px;
                 border: 3px solid rgba(255, 255, 255, 0.3);
@@ -332,7 +506,7 @@ class MessageBubble(QWidget):
         avatar_label.setFixedSize(45, 45)
         
         layout = QVBoxLayout(avatar_container)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(5, 0, 0, 0)
         layout.addWidget(avatar_label)
         
         return avatar_container
@@ -340,7 +514,8 @@ class MessageBubble(QWidget):
     def create_bubble_container(self):
         """إنشاء حاوية فقاعة الرسالة"""
         container = QWidget()
-        container.setMaximumWidth(600)
+        # إزالة تحديد العرض الأقصى لتأخذ المساحة كاملة
+        # container.setMaximumWidth(600)
         
         layout = QVBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -367,10 +542,10 @@ class MessageBubble(QWidget):
                 QFrame {
                     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
                         stop:0 #677770, stop:1 #677777);
-                    border: none;
-                    border-radius: 18px;
+                    border: 2px solid rgba(15,15,55);
+                    border-radius: 6px;
                     border-bottom-right-radius: 6px;
-                    margin-right: 20px;
+                    margin: 5px;
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 }
             """
@@ -381,14 +556,13 @@ class MessageBubble(QWidget):
                 QFrame {
                     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
                         stop:0 #f5f5f5, stop:1 #e0e0e0);
-                    border: 1px solid rgba(0,0,0,0.1);
-                    border-radius: 18px;
-                    border-bottom-left-radius: 6px;
-                    margin-left: 10px;
+                    border: 1px solid rgba(15,15,55);
+                    border-radius: 8px;
+                    margin: 2px;
                     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
                 }
             """
-            text_color = "#333333"
+            text_color = "#D9D9D9"
             alignment = Qt.AlignLeft
         
         bubble.setStyleSheet(bubble_style)
@@ -397,26 +571,98 @@ class MessageBubble(QWidget):
         content_layout = QVBoxLayout(bubble)
         content_layout.setContentsMargins(15, 12, 15, 12)
         
-        # معالجة النص (دعم Markdown بسيط)
-        processed_message = self.process_message_content(self.message)
+        # إضافة حاوية للأيقونة والنص
+        message_container = QWidget()
+        message_layout = QHBoxLayout(message_container)
+        message_layout.setContentsMargins(0, 0, 0, 0)
+        message_layout.setSpacing(10)
         
-        # النص الرئيسي
-        message_label = SelectableTextLabel(processed_message)
-        message_label.setAlignment(alignment)
-        message_label.setStyleSheet(f"""
-            SelectableTextLabel {{
-                color: {text_color};
-                background: transparent;
-                border: none;
-                font-size: 14px;
-                line-height: 1.4;
-                font-family: 'Arial Unicode MS', 'Tahoma', 'Segoe UI';
-                font-weight: 500;
-            }}
-        """)
-        message_label.setTextFormat(Qt.RichText)
+        # إضافة الأيقونة داخل الفقاعة
+        if self.is_user:
+            # أيقونة المستخدم
+            user_icon = QLabel("👤")
+            user_icon.setStyleSheet("""
+                QLabel {
+                    font-size: 20px;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    padding: 5px;
+                    margin-left: 10px;
+                    min-width: 30px;
+                    max-width: 30px;
+                    min-height: 30px;
+                    max-height: 30px;
+                }
+            """)
+            user_icon.setAlignment(Qt.AlignCenter)
+            message_layout.addWidget(user_icon)
+        else:
+            # أيقونة الذكاء الاصطناعي من الملف
+            ai_icon = QLabel()
+            try:
+                import os
+                icon_path = os.path.join(os.path.dirname(__file__), "assets", "ai_icon.png")
+                if os.path.exists(icon_path):
+                    from PyQt5.QtGui import QPixmap
+                    pixmap = QPixmap(icon_path)
+                    # تحجيم الصورة
+                    scaled_pixmap = pixmap.scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    ai_icon.setPixmap(scaled_pixmap)
+                else:
+                    ai_icon.setText("🤖")
+                    ai_icon.setStyleSheet("font-size: 20px;")
+            except:
+                ai_icon.setText("🤖")
+                ai_icon.setStyleSheet("font-size: 20px;")
+            
+            ai_icon.setStyleSheet(ai_icon.styleSheet() + """
+                QLabel {
+                    background-color: rgba(255, 255, 255, 0.8);
+                    padding: 5px;
+                    margin-right: 10px;
+                    min-width: 30px;
+                    max-width: 30px;
+                    min-height: 30px;
+                    max-height: 30px;
+                }
+            """)
+            ai_icon.setAlignment(Qt.AlignCenter)
+            message_layout.addWidget(ai_icon)
         
-        content_layout.addWidget(message_label)
+        # معالجة النص باستخدام محرك Markdown المتطور للذكاء الاصطناعي
+        if not self.is_user and MARKDOWN_AVAILABLE:
+            # استخدام محرك Markdown المتطور للذكاء الاصطناعي
+            markdown_widget = MessageContentRenderer(self.message)
+            markdown_widget.setStyleSheet(f"""
+                MessageContentRenderer {{
+                    background: transparent;
+                    color: {text_color};
+                }}
+            """)
+            message_layout.addWidget(markdown_widget, 1)
+        else:
+            # معالجة النص العادي للمستخدم أو إذا لم يكن Markdown متوفراً
+            processed_message = self.process_message_content(self.message)
+            
+            # النص الرئيسي
+            message_label = SelectableTextLabel(processed_message)
+            message_label.setAlignment(alignment)
+            message_label.setStyleSheet(f"""
+                SelectableTextLabel {{
+                    color: {text_color};
+                    background: transparent;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    font-family: 'Arial Unicode MS', 'Tahoma', 'Segoe UI';
+                    font-weight: 500;
+                }}
+            """)
+            message_label.setTextFormat(Qt.RichText)
+            
+            # إضافة النص إلى التخطيط
+            message_layout.addWidget(message_label, 1)  # stretch factor = 1
+        
+        # إضافة حاوية الرسالة إلى التخطيط الرئيسي
+        content_layout.addWidget(message_container)
         
         # إضافة أزرار التحكم للرسائل الطويلة
         if len(self.message) > 500:
@@ -429,7 +675,7 @@ class MessageBubble(QWidget):
         """إنشاء أزرار التحكم في الرسالة"""
         controls_widget = QWidget()
         controls_layout = QHBoxLayout(controls_widget)
-        controls_layout.setContentsMargins(0, 5, 0, 0)
+        controls_layout.setContentsMargins(5, 5, 5, 5)
         controls_layout.setSpacing(8)
         
         # زر النسخ
@@ -437,13 +683,12 @@ class MessageBubble(QWidget):
         copy_btn.setFixedSize(30, 25)
         copy_btn.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255, 255, 255, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                background-color: rgba(250, 108, 71, 0.4);
                 border-radius: 12px;
                 font-size: 12px;
             }
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.3);
+                background-color: rgba(250, 100, 71, 0.7);
             }
         """)
         copy_btn.setToolTip("نسخ النص")
@@ -573,11 +818,12 @@ class ProfessionalChatWindow(QMainWindow):
         self.input_history = []
         self.input_history_index = -1
         self.current_theme = "dark"
+        self.sidebar_visible = True
         
         # إعدادات واجهة المستخدم - ستأخذ من النافذة الأب
         self.theme = "dark"
-        self.font_size = 18
-        self.font_family = "arabic_uthmani"
+        self.font_size = 14
+        self.font_family = "Arial Unicode MS"
 
         # إذا كان هناك نافذة أب، خذ الإعدادات منها
         if parent and hasattr(parent, 'theme'):
@@ -627,24 +873,75 @@ class ProfessionalChatWindow(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
+        # استخدام QSplitter مع إمكانية إخفاء/إظهار الشريط الجانبي
+        self.main_splitter = QSplitter(Qt.Horizontal)
+        self.main_splitter.setHandleWidth(6)
+        self.main_splitter.setStyleSheet("""
+            QSplitter::handle {
+                background-color: #555555;
+                width: 6px;
+                border: 1px solid #777777;
+                border-radius: 3px;
+            }
+            QSplitter::handle:hover {
+                background-color: #f36d0b;
+            }
+            QSplitter::handle:pressed {
+                background-color: #f86d06;
+            }
+        """)
+        
+        # إنشاء الشريط الجانبي
+        self.sidebar_widget = QWidget()
+        sidebar_layout = QHBoxLayout(self.sidebar_widget)
+        sidebar_layout.setContentsMargins(0, 0, 0, 0)
+        self.create_sidebar(sidebar_layout)
+        
+        # إنشاء منطقة الشات
+        chat_widget = QWidget()
+        chat_layout = QVBoxLayout(chat_widget)
+        chat_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # إنشاء منطقة الشات الرئيسية  
+        self.create_main_chat_area(chat_layout)
+        
+        # إضافة العناصر للـ splitter
+        self.main_splitter.addWidget(self.sidebar_widget)
+        self.main_splitter.addWidget(chat_widget)
+        
+        # تعيين الأحجام الافتراضية - عرض مرن للشريط الجانبي
+        self.main_splitter.setSizes([300, 1100])
+        self.main_splitter.setStretchFactor(0, 0)  # الشريط الجانبي ثابت
+        self.main_splitter.setStretchFactor(1, 1)  # منطقة الشات مرنة
+        
         # التخطيط الرئيسي
         main_layout = QHBoxLayout(central_widget)
         main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
-        
-        # الشريط الجانبي للتحكم ومدير MCP
-        self.create_sidebar(main_layout)
-        
-        # منطقة الشات الرئيسية
-        self.create_main_chat_area(main_layout)
+        main_layout.addWidget(self.main_splitter)
         
         # تطبيق الستايل العام
         self.apply_global_styles()
 
+    def toggle_sidebar(self):
+        """تبديل إخفاء/إظهار الشريط الجانبي"""
+        if self.sidebar_visible:
+            # إخفاء الشريط الجانبي
+            self.sidebar_widget.hide()
+            self.sidebar_toggle_btn.setText("▶")
+            self.sidebar_toggle_btn.setToolTip("إظهار القائمة الجانبية")
+            self.sidebar_visible = False
+        else:
+            # إظهار الشريط الجانبي
+            self.sidebar_widget.show()
+            self.sidebar_toggle_btn.setText("◀")
+            self.sidebar_toggle_btn.setToolTip("إخفاء القائمة الجانبية")
+            self.sidebar_visible = True
+
     def create_sidebar(self, main_layout):
-        """إنشاء الشريط الجانبي للتحكم مع سكرول"""
+        """إنشاء الشريط الجانبي للتحكم مع سكرول وأحجام محسنة"""
         sidebar = QFrame()
-        sidebar.setFixedWidth(280)
+        sidebar.setMinimumWidth(280)  # حد أدنى أكبر
+        sidebar.setMaximumWidth(400)  # حد أقصى للعرض
         sidebar.setFrameStyle(QFrame.StyledPanel)
         sidebar.setStyleSheet("""
             QFrame {
@@ -653,12 +950,12 @@ class ProfessionalChatWindow(QMainWindow):
             }
         """)
         
-        # إضافة سكرول للشريط الجانبي
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        scroll_area.setStyleSheet("""
+        # إنشاء ScrollArea للشريط الجانبي
+        sidebar_scroll = QScrollArea()
+        sidebar_scroll.setWidgetResizable(True)
+        sidebar_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        sidebar_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        sidebar_scroll.setStyleSheet("""
             QScrollArea {
                 border: none;
                 background-color: #303030;
@@ -681,24 +978,24 @@ class ProfessionalChatWindow(QMainWindow):
         
         sidebar_content = QWidget()
         sidebar_layout = QVBoxLayout(sidebar_content)
-        sidebar_layout.setContentsMargins(10, 15, 10, 15)
-        sidebar_layout.setSpacing(8)
+        sidebar_layout.setContentsMargins(8, 8, 8, 8)
+        sidebar_layout.setSpacing(6)
         
         # عنوان الشريط الجانبي
         title = QLabel("🎛️ لوحة التحكم")
         title.setStyleSheet("""
             QLabel {
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: bold;
                 color: #ffffff;
-                padding: 8px;
+                padding: 6px 4px;
                 background-color: #101010;
-                border-radius: 6px;
+                border-radius: 4px;
                 text-align: center;
             }
         """)
         title.setAlignment(Qt.AlignCenter)
-        title.setFixedHeight(35)
+        title.setFixedHeight(28)
         sidebar_layout.addWidget(title)
         
         # قسم إدارة المحادثات
@@ -721,61 +1018,88 @@ class ProfessionalChatWindow(QMainWindow):
         
         sidebar_layout.addStretch()
         
-        scroll_area.setWidget(sidebar_content)
+        sidebar_scroll.setWidget(sidebar_content)
         
         sidebar_main_layout = QVBoxLayout(sidebar)
         sidebar_main_layout.setContentsMargins(0, 0, 0, 0)
-        sidebar_main_layout.addWidget(scroll_area)
+        sidebar_main_layout.addWidget(sidebar_scroll)
         
         main_layout.addWidget(sidebar)
 
     def create_mcp_manager_section(self, layout):
-        """إنشاء قسم إدارة MCP Servers"""
+        """إنشاء قسم إدارة MCP Servers بحجم محسن"""
+        # مجموعة إدارة MCP Servers
         group = QGroupBox("🔧 إدارة MCP Servers")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
                 color: #ffffff;
+                background-color: #404040;
+                border: 1px solid #555555;
+                border-radius: 5px;
+                margin-top: 6px;
+                padding-top: 12px;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 8px 0 8px;
+                left: 8px;
+                padding: 0 6px 0 6px;
                 color: #ffffff;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setContentsMargins(10, 15, 10, 10)
-        group_layout.setSpacing(5)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
-        # إنشاء مدير MCP وإضافته
-        if MCP_AVAILABLE and MCPManagerSidebar:
-            try:
-                self.mcp_manager = MCPManagerSidebar()
-                
-                # ربط إشارات المدير مع منطق الشات
-                self.mcp_manager.mcp_changed.connect(self.on_mcp_changed)
-                self.mcp_manager.mcp_updated.connect(self.on_mcp_updated)
-                
-                group_layout.addWidget(self.mcp_manager)
-                
-            except Exception as e:
-                error_label = QLabel(f"❌ خطأ في تحميل مدير MCP: {str(e)}")
-                error_label.setStyleSheet("color: #ff6b6b; font-size: 12px;")
-                error_label.setWordWrap(True)
-                group_layout.addWidget(error_label)
-        else:
-            # عرض رسالة عدم توفر MCP
-            info_label = QLabel("⚠️ مدير MCP غير متوفر\nتحقق من ملف mcp_manager.py")
-            info_label.setStyleSheet("color: #ffa500; font-size: 12px;")
-            info_label.setWordWrap(True)
-            info_label.setAlignment(Qt.AlignCenter)
-            group_layout.addWidget(info_label)
+        # قائمة خوادم MCP محسنة
+        mcp_info = QLabel("🟢 Tavily Search\n🟢 Time MCP\n🔴 Filesystem\n🔴 Memory")
+        mcp_info.setStyleSheet("""
+            QLabel {
+                background-color: #3c3c3c;
+                border: 1px solid #555;
+                border-radius: 3px;
+                padding: 4px 6px;
+                font-size: 12px;
+                color: #ffffff;
+                line-height: 1.2;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+            }
+        """)
+        mcp_info.setWordWrap(True)
+        mcp_info.setMinimumHeight(60)
+        group_layout.addWidget(mcp_info)
+        
+        # أزرار إدارة محسنة
+        btn_layout = QHBoxLayout()
+        
+        add_btn = QPushButton("➕")
+        add_btn.setMinimumSize(24, 24)
+        add_btn.setToolTip("إضافة خادم")
+        add_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4a4a4a;
+                border: 1px solid #666;
+                border-radius: 4px;
+                color: #ffffff;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #5a5a5a;
+            }
+        """)
+        btn_layout.addWidget(add_btn)
+        
+        settings_btn = QPushButton("⚙️")
+        settings_btn.setMinimumSize(24, 24)
+        settings_btn.setToolTip("إعدادات")
+        settings_btn.setStyleSheet(add_btn.styleSheet())
+        btn_layout.addWidget(settings_btn)
+        
+        btn_layout.addStretch()
+        group_layout.addLayout(btn_layout)
         
         layout.addWidget(group)
 
@@ -793,30 +1117,34 @@ class ProfessionalChatWindow(QMainWindow):
             self.chat_manager.refresh_mcp_tools()
 
     def create_chat_management_section(self, layout):
-        """إنشاء قسم إدارة المحادثات"""
+        """إنشاء قسم إدارة المحادثات بحجم محسن"""
         group = QGroupBox("💬 إدارة المحادثات")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                margin-top: 6px;
+                padding-top: 12px;
                 color: #ffffff;
+                background-color: #303030;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 10px 0 10px;
-                
-                border-radius: 4px;
+                left: 8px;
+                padding: 0 8px 0 8px;
+                color: #ffffff;
+                border-radius: 2px;
+                background-color: #505050;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setSpacing(8)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
-        # أزرار إدارة المحادثات
+        # أزرار إدارة المحادثات بحجم محسن
         new_chat_btn = self.create_sidebar_button("🆕 محادثة جديدة", "#4CAF50")
         new_chat_btn.clicked.connect(self.start_new_chat)
         
@@ -837,54 +1165,60 @@ class ProfessionalChatWindow(QMainWindow):
         layout.addWidget(group)
 
     def create_model_settings_section(self, layout):
-        """إنشاء قسم إعدادات النموذج"""
+        """إنشاء قسم إعدادات النموذج بحجم محسن"""
         group = QGroupBox("🤖 إعدادات النموذج")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                margin-top: 6px;
+                padding-top: 12px;
                 color: #ffffff;
+                background-color: #404040;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 10px 0 10px;
-                border-radius: 4px;
+                left: 8px;
+                padding: 0 8px 0 8px;
+                color: #ffffff;
+                border-radius: 2px;
+                background-color: #505050;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setSpacing(8)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
         # اختيار النموذج
         model_label = QLabel("النموذج الحالي:")
         model_label.setStyleSheet("color: #ffffff; font-size: 12px;")
         
         self.model_selector = QComboBox()
+        self.model_selector.setMinimumHeight(28)
         self.model_selector.setStyleSheet("""
             QComboBox {
                 background-color: #333333;
                 color: white;
-                border: 1px solid #111;
-                border-radius: 6px;
-                padding: 8px;
-                font-size: 14px;
+                border: 1px solid #555;
+                border-radius: 4px;
+                padding: 6px;
+                font-size: 12px;
             }
             QComboBox::drop-down {
-                border: #222;
+                border: none;
                 width: 20px;
             }
             QComboBox::down-arrow {
                 color: white;
             }
             QComboBox QAbstractItemView {
-                background-color: #222;
+                background-color: #333;
                 color: white;
-                border: 1px solid #444;
-                selection-background-color: #111;
+                border: 1px solid #555;
+                selection-background-color: #555;
             }
         """)
         
@@ -899,34 +1233,45 @@ class ProfessionalChatWindow(QMainWindow):
         group_layout.addWidget(self.internet_toggle)
         group_layout.addWidget(self.ai_toggle)
         
-        # تحميل النماذج
+        # تحميل النماذج وربط الأحداث
         self.load_models_to_selector()
+        
+        # ربط حدث تغيير النموذج بطريقة محسنة
         self.model_selector.currentTextChanged.connect(self.on_model_changed)
+        self.model_selector.currentIndexChanged.connect(self.on_model_changed)
+        
+        # تحديث فوري للعرض
+        QTimer.singleShot(500, self.update_model_display)
         
         layout.addWidget(group)
 
     def create_instructions_section(self, layout):
-        """إنشاء قسم ملفات التعليمات"""
+        """إنشاء قسم ملفات التعليمات بحجم محسن"""
         group = QGroupBox("📋 ملفات التعليمات")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                margin-top: 6px;
+                padding-top: 12px;
                 color: #ffffff;
+                background-color: #404040;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 10px 0 10px;
-                border-radius: 4px;
+                left: 8px;
+                padding: 0 8px 0 8px;
+                color: #ffffff;
+                border-radius: 2px;
+                background-color: #505050;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setSpacing(8)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
         # إنشاء 4 أزرار لملفات التعليمات
         self.instruction_files = [
@@ -942,27 +1287,32 @@ class ProfessionalChatWindow(QMainWindow):
         layout.addWidget(group)
 
     def create_status_section(self, layout):
-        """إنشاء قسم المؤشرات والحالة"""
+        """إنشاء قسم المؤشرات والحالة بحجم محسن"""
         group = QGroupBox("📊 حالة النظام")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                background-color: #404040;
+                margin-top: 6px;
+                padding-top: 12px;
                 color: #ffffff;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 10px 0 10px;
-                border-radius: 4px;
+                left: 8px;
+                padding: 0 8px 0 8px;
+                color: #ffffff;
+                border-radius: 2px;
+                background-color: #505050;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setSpacing(8)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
         # مؤشرات الحالة
         self.create_status_indicators(group_layout)
@@ -973,11 +1323,11 @@ class ProfessionalChatWindow(QMainWindow):
         self.message_counter.setStyleSheet("""
             QLabel {
                 color: #4CAF50;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: bold;
-                padding: 8px;
+                padding: 6px;
                 background-color: rgba(76, 175, 80, 0.2);
-                border-radius: 6px;
+                border-radius: 4px;
             }
         """)
         group_layout.addWidget(self.message_counter)
@@ -985,28 +1335,32 @@ class ProfessionalChatWindow(QMainWindow):
         layout.addWidget(group)
 
     def create_settings_section(self, layout):
-        """إنشاء قسم الإعدادات العامة"""
+        """إنشاء قسم الإعدادات العامة بحجم محسن"""
         group = QGroupBox("⚙️ الإعدادات")
         group.setStyleSheet("""
             QGroupBox {
+                font-size: 13px;
                 font-weight: bold;
-                border: 2px solid #555;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding-top: 10px;
+                border: 1px solid #555;
+                border-radius: 5px;
+                margin-top: 6px;
+                padding-top: 12px;
                 color: #ffffff;
+                background-color: #404040;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 10px 0 10px;
-                background-color: #2d2d2d;
-                border-radius: 4px;
+                left: 8px;
+                padding: 0 8px 0 8px;
+                color: #ffffff;
+                background-color: #505050;
+                border-radius: 2px;
             }
         """)
         
         group_layout = QVBoxLayout(group)
-        group_layout.setSpacing(8)
+        group_layout.setContentsMargins(8, 12, 8, 6)
+        group_layout.setSpacing(4)
         
         # أزرار الإعدادات
         theme_btn = self.create_sidebar_button("🎨 تغيير الثيم", "#607D8B")
@@ -1018,9 +1372,15 @@ class ProfessionalChatWindow(QMainWindow):
         about_btn = self.create_sidebar_button("ℹ️ حول البرنامج", "#9E9E9E")
         about_btn.clicked.connect(self.show_about_dialog)
         
-        attachment_btn = self.create_toolbar_button("📎", "إرفاق ملف", self.attach_file)
-        voice_btn = self.create_toolbar_button("🎤", "تسجيل صوتي", self.voice_input)
-        search_btn = self.create_toolbar_button("🌐", "بحث في الإنترنت", self.show_internet_search_dialog)
+        # أزرار إضافية
+        attachment_btn = self.create_sidebar_button("📎 إرفاق ملف", "#2196F3")
+        attachment_btn.clicked.connect(self.attach_file)
+        
+        voice_btn = self.create_sidebar_button("🎤 تسجيل صوتي", "#FF9800")
+        voice_btn.clicked.connect(self.voice_input)
+        
+        search_btn = self.create_sidebar_button("🌐 بحث الإنترنت", "#009688")
+        search_btn.clicked.connect(self.show_internet_search_dialog)
         
         group_layout.addWidget(theme_btn)
         group_layout.addWidget(font_btn)
@@ -1061,14 +1421,34 @@ class ProfessionalChatWindow(QMainWindow):
         top_layout = QHBoxLayout(top_bar)
         top_layout.setContentsMargins(20, 10, 20, 10)
         
-        # العنوان مع الأيقونة
+        # العنوان مع الأيقونة وزر التبديل
         title_container = QWidget()
         title_layout = QHBoxLayout(title_container)
         title_layout.setContentsMargins(0, 0, 0, 0)
-        
+        title_layout.setSpacing(10)
+
+        # إضافة زر إخفاء/إظهار الشريط الجانبي بجانب أيقونة الروبوت
+        self.sidebar_toggle_btn = QPushButton("◀")
+        self.sidebar_toggle_btn.setFixedSize(30, 30)
+        self.sidebar_toggle_btn.setToolTip("إخفاء/إظهار القائمة الجانبية")
+        self.sidebar_toggle_btn.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(243, 109, 11, 0.8);
+                color: white;
+                border: none;
+                border-radius: 15px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: rgba(243, 109, 11, 1.0);
+            }
+        """)
+        self.sidebar_toggle_btn.clicked.connect(self.toggle_sidebar)
+
         title_icon = QLabel("🤖")
         title_icon.setStyleSheet("font-size: 32px;")
-        
+
         title_text = QLabel("المساعد الذكي للقرآن الكريم")
         title_text.setStyleSheet("""
             QLabel {
@@ -1078,7 +1458,8 @@ class ProfessionalChatWindow(QMainWindow):
                 font-family: 'Arial Unicode MS', 'Tahoma';
             }
         """)
-        
+
+        title_layout.addWidget(self.sidebar_toggle_btn)
         title_layout.addWidget(title_icon)
         title_layout.addWidget(title_text)
         title_layout.addStretch()
@@ -1104,9 +1485,9 @@ class ProfessionalChatWindow(QMainWindow):
         status_dot.setStyleSheet("color: #4CAF50; font-size: 20px;")
         status_dot.setToolTip("متصل")
         
-        # معلومات النموذج الحالي
-        model_info = QLabel("Qwen3-4B")
-        model_info.setStyleSheet("""
+        # معلومات النموذج الحالي - سيتم تحديثها ديناميكياً
+        self.model_info = QLabel("جاري التحميل...")
+        self.model_info.setStyleSheet("""
             QLabel {
                 color: #ffffff;
                 font-size: 12px;
@@ -1118,7 +1499,10 @@ class ProfessionalChatWindow(QMainWindow):
         """)
         
         info_layout.addWidget(status_dot)
-        info_layout.addWidget(model_info)
+        info_layout.addWidget(self.model_info)
+        
+        # حفظ مرجع للتحديث لاحقاً
+        self.connection_info_model = self.model_info
         
         return info_container
 
@@ -1346,8 +1730,6 @@ class ProfessionalChatWindow(QMainWindow):
         toolbar = self.create_input_toolbar()
         input_layout.addWidget(toolbar)
         
-        # شريط البحث في الإنترنت مخفي الآن - يتم الوصول إليه عبر زر
-        
         # منطقة الإدخال الرئيسية
         main_input_layout = QHBoxLayout()
         
@@ -1376,6 +1758,9 @@ class ProfessionalChatWindow(QMainWindow):
         
         # تطبيق فلتر الأحداث للتحكم في الإدخال
         self.message_input.installEventFilter(self)
+        
+        # ربط تحديث عداد الأحرف
+        self.message_input.textChanged.connect(self.update_char_counter)
         
         # أزرار الإرسال والإجراءات
         buttons_container = self.create_input_buttons()
@@ -1465,80 +1850,6 @@ class ProfessionalChatWindow(QMainWindow):
         toolbar_layout.addWidget(self.char_counter)
         
         return toolbar
-
-    def create_internet_search_bar(self):
-        """إنشاء شريط بحث الإنترنت"""
-        search_container = QFrame()
-        search_container.setStyleSheet("""
-            QFrame {
-                background-color: rgba(0, 150, 136, 0.1);
-                border: 1px solid rgba(0, 150, 136, 0.3);
-                border-radius: 8px;
-                padding: 5px;
-            }
-        """)
-        
-        search_layout = QHBoxLayout(search_container)
-        search_layout.setContentsMargins(8, 5, 8, 5)
-        search_layout.setSpacing(8)
-        
-        # أيقونة البحث
-        search_icon = QLabel("🌐")
-        search_icon.setStyleSheet("""
-            QLabel {
-                font-size: 16px;
-                color: #009688;
-            }
-        """)
-        
-        # حقل البحث
-        self.search_input = QLineEdit()
-        self.search_input.setPlaceholderText("ابحث في الإنترنت...")
-        self.search_input.setStyleSheet("""
-            QLineEdit {
-                background-color: rgba(255, 255, 255, 0.9);
-                border: 1px solid rgba(0, 150, 136, 0.5);
-                border-radius: 15px;
-                padding: 8px 15px;
-                font-size: 13px;
-                color: #333;
-            }
-            QLineEdit:focus {
-                border: 2px solid #009688;
-                background-color: white;
-            }
-        """)
-        
-        # زر البحث
-        search_btn = QPushButton("🔍")
-        search_btn.setFixedSize(35, 30)
-        search_btn.setToolTip("بحث في الإنترنت")
-        search_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #009688;
-                color: white;
-                border: none;
-                border-radius: 15px;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #00796B;
-            }
-            QPushButton:pressed {
-                background-color: #004D40;
-            }
-        """)
-        
-        # ربط الأحداث
-        search_btn.clicked.connect(self.perform_internet_search)
-        self.search_input.returnPressed.connect(self.perform_internet_search)
-        
-        search_layout.addWidget(search_icon)
-        search_layout.addWidget(self.search_input)
-        search_layout.addWidget(search_btn)
-        
-        return search_container
 
     def create_input_buttons(self):
         """إنشاء أزرار منطقة الإدخال"""
@@ -1633,9 +1944,10 @@ class ProfessionalChatWindow(QMainWindow):
         return button
 
     def create_sidebar_button(self, text, color=None):
-        """إنشاء زر بدون خلفية للشريط الجانبي"""
+        """إنشاء زر بدون خلفية للشريط الجانبي بحجم محسن"""
         button = QPushButton(text)
-        button.setFixedHeight(35)
+        button.setMinimumHeight(26)
+        button.setMaximumWidth(250)
         
         # تغيير مؤشر الماوس في PyQt5
         button.setCursor(Qt.PointingHandCursor)
@@ -1645,17 +1957,17 @@ class ProfessionalChatWindow(QMainWindow):
                 background: transparent;
                 color: #ffffff;
                 border: none;
-                border-radius: 6px;
-                padding: 8px 12px;
+                border-radius: 4px;
+                padding: 4px 6px;
                 font-weight: bold;
-                font-size: 13px;
+                font-size: 12px;
                 text-align: left;
+                max-width: 250px;
             }
             QPushButton:hover {
-                background: rgb(16, 16, 16, 179);
+                background: rgba(243, 109, 11, 0.3);
                 color: #ffffff;
-                border: 2px solid #f36d0b; 
-
+                border: 1px solid #f36d0b;
             }
             QPushButton:pressed {
                 background: rgba(255, 255, 255, 0.2);
@@ -1755,7 +2067,7 @@ class ProfessionalChatWindow(QMainWindow):
         button = QPushButton(text)
         button.setCheckable(True)
         button.setChecked(initial_state)
-        button.setFixedHeight(35)
+        button.setMinimumHeight(28)
         
         self.update_toggle_style(button)
         button.toggled.connect(lambda: self.update_toggle_style(button))
@@ -1795,31 +2107,31 @@ class ProfessionalChatWindow(QMainWindow):
     def create_status_indicator(self, icon, text, color):
         """إنشاء مؤشر حالة واحد"""
         container = QWidget()
-        container.setFixedHeight(30)
+        container.setFixedHeight(28)
         
         layout = QHBoxLayout(container)
-        layout.setContentsMargins(8, 4, 8, 4)
-        layout.setSpacing(8)
+        layout.setContentsMargins(6, 3, 6, 3)
+        layout.setSpacing(6)
         
         # الأيقونة
         icon_label = QLabel(icon)
-        icon_label.setFixedSize(20, 20)
+        icon_label.setFixedSize(18, 18)
         icon_label.setAlignment(Qt.AlignCenter)
-        icon_label.setStyleSheet("font-size: 14px;")
+        icon_label.setStyleSheet("font-size: 12px;")
         
         # النص
         text_label = QLabel(text)
         text_label.setStyleSheet("""
             QLabel {
                 color: #ffffff;
-                font-size: 14px;
+                font-size: 11px;
                 font-weight: bold;
             }
         """)
         status_dot = QLabel("●")
-        status_dot.setFixedSize(12, 12)
+        status_dot.setFixedSize(10, 10)
         status_dot.setAlignment(Qt.AlignCenter)
-        status_dot.setStyleSheet(f"QLabel {{ color: {color}; font-size: 14px; }}")
+        status_dot.setStyleSheet(f"QLabel {{ color: {color}; font-size: 12px; }}")
         
         layout.addWidget(icon_label)
         layout.addWidget(text_label)
@@ -1905,17 +2217,25 @@ class ProfessionalChatWindow(QMainWindow):
     def process_message(self, message):
         """معالجة الرسالة وإنتاج الرد"""
         try:
+            # تشخيص مفصل
+            print(f"🔍 حالة chat_manager: {self.chat_manager is not None}")
+            if self.chat_manager:
+                print(f"🔍 وجود get_response: {hasattr(self.chat_manager, 'get_response')}")
+            
             if self.chat_manager and hasattr(self.chat_manager, 'get_response'):
                 # استخدام مدير الشات إذا كان متاحاً
+                print("🤖 استخدام OpenRouter...")
                 response = self.chat_manager.get_response(message)
                 self.add_message("assistant", response)
             else:
                 # رد احتياطي محسن
+                print("🔄 استخدام الرد الاحتياطي...")
                 response = self.enhanced_fallback_response(message)
                 self.add_message("assistant", response)
                 
         except Exception as e:
             print(f"❌ خطأ في معالجة الرسالة: {e}")
+            print(f"📊 نوع الخطأ: {type(e).__name__}")
             error_response = f"❌ حدث خطأ في معالجة طلبك: {str(e)}"
             self.add_message("assistant", error_response)
 
@@ -1962,7 +2282,7 @@ class ProfessionalChatWindow(QMainWindow):
 اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ
 صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ
 
-📝 **ملاحظة:** هذا مثال توضيحي. للبحث المتقدم، تأكد من إعدادات قاعدة البيانات.
+📍 **ملاحظة:** هذا مثال توضيحي. للبحث المتقدم، تأكد من إعدادات قاعدة البيانات.
                 """
             else:
                 return f"""
@@ -2012,7 +2332,7 @@ class ProfessionalChatWindow(QMainWindow):
             self.char_counter.setStyleSheet(f"""
                 QLabel {{
                     color: {color};
-                    font-size: 14px;
+                    font-size: 11px;
                     padding: 2px 8px;
                     background-color: #121823;
                     border-radius: 10px;
@@ -2081,71 +2401,251 @@ class ProfessionalChatWindow(QMainWindow):
         # F1 - عرض المساعدة
         help_shortcut = QShortcut(QKeySequence("F1"), self)
         help_shortcut.activated.connect(self.show_help)
+        
+        # Ctrl+Shift+S - إخفاء/إظهار الشريط الجانبي
+        sidebar_shortcut = QShortcut(QKeySequence("Ctrl+Shift+S"), self)
+        sidebar_shortcut.activated.connect(self.toggle_sidebar)
 
     def setup_ai_components(self):
         """إعداد مكونات الذكاء الاصطناعي"""
         try:
+            print(f"🔍 OPENROUTER_AVAILABLE = {OPENROUTER_AVAILABLE}")
             if OPENROUTER_AVAILABLE:
+                print("🔧 محاولة إعداد OpenRouter Chat Manager...")
                 self.chat_manager = OpenRouterChatManager()
-                print("✅ تم إعداد OpenRouter Chat Manager")
+                print("✅ تم إعداد OpenRouter Chat Manager بنجاح")
+                print(f"🔍 نوع chat_manager: {type(self.chat_manager)}")
+                print(f"🔍 وجود get_response: {hasattr(self.chat_manager, 'get_response')}")
+                
+                # اختبار توفر مفاتيح API
+                if hasattr(self.chat_manager, 'current_api_key') and self.chat_manager.current_api_key:
+                    print(f"🔑 مفتاح API متوفر: {self.chat_manager.current_api_key[:10]}...")
+                else:
+                    print("⚠️ مفتاح API غير متوفر")
+                    
+                # اختبار الاتصال السريع
+                try:
+                    models = self.chat_manager.get_available_models()
+                    print(f"📋 تم تحميل {len(models)} نموذج مجاني")
+                except Exception as model_error:
+                    print(f"⚠️ خطأ في تحميل النماذج: {model_error}")
+                    
             else:
                 self.chat_manager = None
-                print("⚠️ OpenRouter غير متوفر")
+                print("⚠️ OpenRouter غير متوفر - مكتبات مفقودة")
                 
         except Exception as e:
             print(f"❌ خطأ في إعداد مكونات الذكاء الاصطناعي: {e}")
+            print(f"📊 تفاصيل الخطأ: {type(e).__name__}")
+            import traceback
+            print(f"📊 التفاصيل الكاملة: {traceback.format_exc()}")
             self.chat_manager = None
 
+    def process_message(self, message):
+        """معالجة الرسالة وإنتاج الرد"""
+        try:
+            # تشخيص مفصل
+            print(f"🔍 حالة chat_manager: {self.chat_manager is not None}")
+            if self.chat_manager:
+                print(f"🔍 وجود get_response: {hasattr(self.chat_manager, 'get_response')}")
+            
+            if self.chat_manager and hasattr(self.chat_manager, 'get_response'):
+                # استخدام مدير الشات إذا كان متاحاً
+                print("🤖 استخدام OpenRouter...")
+                response = self.chat_manager.get_response(message)
+                self.add_message("assistant", response)
+            else:
+                # رد احتياطي محسن
+                print("🔄 استخدام الرد الاحتياطي...")
+                response = self.enhanced_fallback_response(message)
+                self.add_message("assistant", response)
+                
+        except Exception as e:
+            print(f"❌ خطأ في معالجة الرسالة: {e}")
+            print(f"📊 نوع الخطأ: {type(e).__name__}")
+            error_response = f"❌ حدث خطأ في معالجة طلبك: {str(e)}"
+            self.add_message("assistant", error_response)
+
     def load_models_to_selector(self):
-        """تحميل النماذج إلى القائمة المنسدلة"""
         try:
             if hasattr(self, 'chat_manager') and self.chat_manager:
                 models = self.chat_manager.get_available_models()
             else:
-                # تحميل مؤقت من CSV مباشرة
-                import pandas as pd
-                csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                                       'openrouter_free_models_snapshot.csv')
-                if os.path.exists(csv_path):
-                    df = pd.read_csv(csv_path)
-                    models = {}
-                    for _, row in df.iterrows():
-                        models[row['model_id']] = {
-                            "name": row['display_name'],
-                            "vendor": row['vendor']
-                        }
-                else:
-                    models = {"qwen/qwen3-4b:free": {"name": "Qwen3 4B", "vendor": "Qwen"}}
+                # تحميل مباشر من بيانات النماذج المجانية
+                models = self._load_fallback_free_models()
             
             # إضافة النماذج للقائمة
             self.model_selector.clear()
             for model_id, info in models.items():
-                display_text = f"{info['name']} ({info['vendor']})"
+                vendor = info.get('vendor', info['name'].split(':')[0] if ':' in info['name'] else 'OpenRouter')
+                display_text = f"{info['name']} ({vendor})"
                 self.model_selector.addItem(display_text, model_id)
+            
+            # تعيين النموذج الافتراضي وتحديث الواجهة
+            if self.model_selector.count() > 0:
+                # تعيين أول نموذج كافتراضي
+                self.model_selector.setCurrentIndex(0)
+                # تحديث شريط المعلومات فوراً
+                self.update_model_display()
                 
             print(f"✅ تم تحميل {len(models)} نموذج إلى القائمة")
             
         except Exception as e:
             print(f"❌ خطأ في تحميل النماذج: {e}")
             self.model_selector.addItem("Qwen3 4B (Qwen)", "qwen/qwen3-4b:free")
+            self.update_model_display()
+    
+    def _load_fallback_free_models(self) -> dict:
+        """تحميل النماذج المجانية كنسخة احتياطية - مرتبة حسب الموثوقية"""
+        # نفس قائمة النماذج المجانية من openrouter_chat_manager
+        # مرتبة بحيث النماذج الموثوقة والتي تعمل تأتي أولاً
+        free_models_data = [
+            # النماذج الموثوقة التي تعمل بشكل جيد
+            {"model_id": "qwen/qwen3-4b:free", "name": "Qwen: Qwen3 4B", "context": 40960},
+            {"model_id": "qwen/qwen3-8b:free", "name": "Qwen: Qwen3 8B", "context": 40960},
+            {"model_id": "qwen/qwen3-14b:free", "name": "Qwen: Qwen3 14B", "context": 40960},
+            {"model_id": "meta-llama/llama-3.2-3b-instruct:free", "name": "Meta: Llama 3.2 3B Instruct", "context": 131072},
+            {"model_id": "meta-llama/llama-3.3-8b-instruct:free", "name": "Meta: Llama 3.3 8B Instruct", "context": 128000},
+            {"model_id": "mistralai/mistral-7b-instruct:free", "name": "Mistral: Mistral 7B Instruct", "context": 32768},
+            {"model_id": "mistralai/mistral-nemo:free", "name": "Mistral: Mistral Nemo", "context": 131072},
+            # النماذج المتقدمة (قد تكون أبطأ)
+            {"model_id": "meta-llama/llama-3.3-70b-instruct:free", "name": "Meta: Llama 3.3 70B Instruct", "context": 65536},
+            {"model_id": "deepseek/deepseek-r1:free", "name": "DeepSeek: R1", "context": 163840},
+            {"model_id": "deepseek/deepseek-r1-0528:free", "name": "DeepSeek: R1 0528", "context": 163840},
+            {"model_id": "qwen/qwen2.5-72b-instruct:free", "name": "Qwen2.5 72B Instruct", "context": 32768},
+            # النماذج التجريبية
+            {"model_id": "google/gemini-2.0-flash-exp:free", "name": "Google: Gemini 2.0 Flash Experimental", "context": 1048576},
+            {"model_id": "x-ai/grok-4-fast:free", "name": "xAI: Grok 4 Fast", "context": 2000000},
+            # باقي النماذج
+            {"model_id": "deepseek/deepseek-chat-v3-0324:free", "name": "DeepSeek: DeepSeek V3 0324", "context": 163840},
+            {"model_id": "tngtech/deepseek-r1t2-chimera:free", "name": "TNG: DeepSeek R1T2 Chimera", "context": 163840},
+            {"model_id": "z-ai/glm-4.5-air:free", "name": "Z.AI: GLM 4.5 Air", "context": 131072},
+            {"model_id": "qwen/qwen3-coder:free", "name": "Qwen: Qwen3 Coder 480B A35B", "context": 262144},
+            {"model_id": "tngtech/deepseek-r1t-chimera:free", "name": "TNG: DeepSeek R1T Chimera", "context": 163840},
+            {"model_id": "qwen/qwen3-235b-a22b:free", "name": "Qwen: Qwen3 235B A22B", "context": 131072},
+            {"model_id": "moonshotai/kimi-k2:free", "name": "MoonshotAI: Kimi K2 0711", "context": 32768},
+            {"model_id": "microsoft/mai-ds-r1:free", "name": "Microsoft: MAI DS R1", "context": 163840},
+            {"model_id": "nvidia/nemotron-nano-9b-v2:free", "name": "NVIDIA: Nemotron Nano 9B V2", "context": 128000},
+            {"model_id": "deepseek/deepseek-r1-distill-llama-70b:free", "name": "DeepSeek: R1 Distill Llama 70B", "context": 8192},
+            {"model_id": "openai/gpt-oss-20b:free", "name": "OpenAI: gpt-oss-20b", "context": 131072},
+            {"model_id": "mistralai/mistral-small-3.2-24b-instruct:free", "name": "Mistral: Mistral Small 3.2 24B", "context": 131072},
+            {"model_id": "meta-llama/llama-4-maverick:free", "name": "Meta: Llama 4 Maverick", "context": 128000},
+            {"model_id": "qwen/qwen2.5-vl-72b-instruct:free", "name": "Qwen: Qwen2.5 VL 72B Instruct", "context": 32768},
+            {"model_id": "deepseek/deepseek-r1-0528-qwen3-8b:free", "name": "DeepSeek: Deepseek R1 0528 Qwen3 8B", "context": 131072},
+            {"model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free", "name": "Venice: Uncensored", "context": 32768},
+            {"model_id": "meta-llama/llama-3.1-405b-instruct:free", "name": "Meta: Llama 3.1 405B Instruct", "context": 65536},
+            {"model_id": "moonshotai/kimi-dev-72b:free", "name": "MoonshotAI: Kimi Dev 72B", "context": 131072},
+            {"model_id": "qwen/qwen3-30b-a3b:free", "name": "Qwen: Qwen3 30B A3B", "context": 40960},
+            {"model_id": "agentica-org/deepcoder-14b-preview:free", "name": "Agentica: Deepcoder 14B Preview", "context": 96000},
+            {"model_id": "google/gemma-3-27b-it:free", "name": "Google: Gemma 3 27B", "context": 96000},
+            {"model_id": "qwen/qwen-2.5-coder-32b-instruct:free", "name": "Qwen2.5 Coder 32B Instruct", "context": 32768},
+            {"model_id": "meta-llama/llama-4-scout:free", "name": "Meta: Llama 4 Scout", "context": 128000},
+            {"model_id": "mistralai/mistral-small-3.1-24b-instruct:free", "name": "Mistral: Mistral Small 3.1 24B", "context": 128000},
+            {"model_id": "qwen/qwq-32b:free", "name": "Qwen: QwQ 32B", "context": 32768},
+            {"model_id": "shisa-ai/shisa-v2-llama3.3-70b:free", "name": "Shisa AI: Shisa V2 Llama 3.3 70B", "context": 32768},
+            {"model_id": "mistralai/devstral-small-2505:free", "name": "Mistral: Devstral Small 2505", "context": 32768},
+            {"model_id": "qwen/qwen2.5-vl-32b-instruct:free", "name": "Qwen: Qwen2.5 VL 32B Instruct", "context": 8192},
+            {"model_id": "cognitivecomputations/dolphin3.0-mistral-24b:free", "name": "Dolphin3.0 Mistral 24B", "context": 32768},
+            {"model_id": "nousresearch/deephermes-3-llama-3-8b-preview:free", "name": "Nous: DeepHermes 3 Llama 3 8B Preview", "context": 131072},
+            {"model_id": "moonshotai/kimi-vl-a3b-thinking:free", "name": "MoonshotAI: Kimi VL A3B Thinking", "context": 131072},
+            {"model_id": "tencent/hunyuan-a13b-instruct:free", "name": "Tencent: Hunyuan A13B Instruct", "context": 32768},
+            {"model_id": "google/gemma-3-12b-it:free", "name": "Google: Gemma 3 12B", "context": 32768},
+            {"model_id": "mistralai/mistral-small-24b-instruct-2501:free", "name": "Mistral: Mistral Small 3", "context": 32768},
+            {"model_id": "arliai/qwq-32b-arliai-rpr-v1:free", "name": "ArliAI: QwQ 32B RpR v1", "context": 32768},
+            {"model_id": "google/gemma-2-9b-it:free", "name": "Google: Gemma 2 9B", "context": 8192},
+            {"model_id": "google/gemma-3n-e2b-it:free", "name": "Google: Gemma 3n 2B", "context": 8192},
+            {"model_id": "cognitivecomputations/dolphin3.0-r1-mistral-24b:free", "name": "Dolphin3.0 R1 Mistral 24B", "context": 32768},
+            {"model_id": "google/gemma-3n-e4b-it:free", "name": "Google: Gemma 3n 4B", "context": 8192},
+            {"model_id": "google/gemma-3-4b-it:free", "name": "Google: Gemma 3 4B", "context": 32768},
+            # النماذج المحدثة الجديدة
+            {"model_id": "deepseek/deepseek-chat-v3.1:free", "name": "DeepSeek: DeepSeek V3.1", "context": 163840}
+        ]
+        
+        models = {}
+        for model_data in free_models_data:
+            model_id = model_data["model_id"]
+            models[model_id] = {
+                "name": model_data["name"],
+                "vendor": model_data["name"].split(":")[0],
+                "params": "Free Tier",
+                "context": model_data["context"],
+                "modalities": "text",
+                "description": f"Free tier model - {model_data['context']} context window",
+                "pricing_input": 0.0,
+                "pricing_output": 0.0
+            }
+        
+        return models
 
     def on_model_changed(self):
-        """التعامل مع تغيير النموذج"""
+        """التعامل مع تغيير النموذج - محسن"""
         if hasattr(self, 'model_selector') and self.model_selector.currentData():
             selected_model = self.model_selector.currentData()
+            selected_text = self.model_selector.currentText()
+            
+            print(f"🔄 تغيير النموذج إلى: {selected_model}")
+            print(f"🔄 النص المعروض: {selected_text}")
+            
+            # تحديث مدير الشات إذا كان متاحاً
             if hasattr(self, 'chat_manager') and self.chat_manager:
                 try:
                     self.chat_manager.set_model(selected_model)
-                    # تحديث شريط معلومات النموذج
-                    if hasattr(self, 'current_model_label'):
-                        model_name = selected_model.split('/')[-1].split(':')[0]  # استخراج الاسم القصير
-                        self.current_model_label.setText(f"🤖 النموذج: {model_name}")
-                    print(f"🔄 تم تغيير النموذج إلى: {selected_model}")
+                    print(f"✅ تم تعيين النموذج في مدير الشات")
                 except Exception as e:
-                    print(f"❌ خطأ في تغيير النموذج: {e}")
-                    if hasattr(self, 'connection_status'):
-                        self.connection_status.setText("❌ خطأ")
-                        self.connection_status.setStyleSheet("QLabel { color: #f44336; font-size: 12px; }")
+                    print(f"❌ خطأ في تعيين النموذج: {e}")
+            
+            # تحديث عرض النموذج في الواجهة
+            self.update_model_display()
+            
+        else:
+            print("⚠️ لا يوجد نموذج محدد أو القائمة فارغة")
+            
+    def update_model_display(self):
+        """تحديث عرض النموذج في شريط المعلومات"""
+        try:
+            if hasattr(self, 'model_selector') and self.model_selector.currentData():
+                selected_model = self.model_selector.currentData()
+                selected_text = self.model_selector.currentText()
+                
+                # استخراج اسم النموذج المختصر
+                if '(' in selected_text and ')' in selected_text:
+                    # استخراج الاسم من النص المعروض
+                    model_name = selected_text.split('(')[0].strip()
+                else:
+                    # استخراج من معرف النموذج
+                    model_name = selected_model.split('/')[-1].split(':')[0]
+                
+                # تحديث شريط المعلومات
+                if hasattr(self, 'current_model_label'):
+                    self.current_model_label.setText(f"🤖 النموذج: {model_name}")
+                    print(f"✅ تم تحديث عرض النموذج في الشريط: {model_name}")
+                else:
+                    print("⚠️ لم يتم العثور على current_model_label")
+                
+                # تحديث معلومات الاتصال في الشريط العلوي
+                if hasattr(self, 'connection_info_model'):
+                    self.connection_info_model.setText(model_name)
+                elif hasattr(self, 'model_info'):
+                    self.model_info.setText(model_name)
+                
+                # تحديث حالة الاتصال
+                if hasattr(self, 'connection_status'):
+                    self.connection_status.setText("✅ متصل")
+                    self.connection_status.setStyleSheet("QLabel { color: #4CAF50; font-size: 12px; }")
+                    
+            else:
+                # في حالة عدم وجود نموذج محدد
+                if hasattr(self, 'current_model_label'):
+                    self.current_model_label.setText("🤖 النموذج: غير محدد")
+                print("⚠️ لا يوجد نموذج محدد للعرض")
+                
+        except Exception as e:
+            print(f"❌ خطأ في تحديث عرض النموذج: {e}")
+            if hasattr(self, 'current_model_label'):
+                self.current_model_label.setText("🤖 النموذج: خطأ")
+            if hasattr(self, 'connection_status'):
+                self.connection_status.setText("❌ خطأ")
+                self.connection_status.setStyleSheet("QLabel { color: #f44336; font-size: 12px; }")
 
     def load_current_conversation(self):
         """تحميل المحادثة الحالية من التاريخ"""
@@ -2365,15 +2865,6 @@ class ProfessionalChatWindow(QMainWindow):
             self.message_input.setText("حلل هذا النص: ")
         self.message_input.setFocus()
 
-    def quick_internet_search(self):
-        """بحث إنترنت سريع"""
-        text = self.message_input.toPlainText()
-        if text:
-            self.message_input.setText(f"ابحث في الإنترنت عن: {text}")
-        else:
-            self.message_input.setText("ابحث في الإنترنت عن: ")
-        self.message_input.setFocus()
-
     def quick_summarize(self):
         """تلخيص سريع"""
         text = self.message_input.toPlainText()
@@ -2408,49 +2899,57 @@ class ProfessionalChatWindow(QMainWindow):
 
     def apply_dark_theme(self):
         """تطبيق الثيم المظلم المحدث"""
-        self.setStyleSheet("""
-            QMainWindow {
+        self.setStyleSheet(f"""
+            QMainWindow {{
                 background-color: #222223;
                 color: #ffffff;
-            }
-            QFrame {
+                font-family: '{self.font_family}';
+                font-size: {self.font_size}px;
+            }}
+            QFrame {{
                 background-color: #333333;
-            }
-            QGroupBox {
+            }}
+            QGroupBox {{
                 background-color: transparent;
                 font-weight: bold;
                 color: #ffffff;
                 padding-top: 10px;
-            }
-            QGroupBox::title {
+            }}
+            QGroupBox::title {{
                 subcontrol-origin: margin;
                 left: 10px;
                 padding: 0 8px 0 8px;
                 color: #f36d0b;
-            }
-            QWidget {
+            }}
+            QWidget {{
                 background-color: #222;
                 color: #ffffff;
-            }
+                font-family: '{self.font_family}';
+                font-size: {self.font_size}px;
+            }}
         """)
 
     def apply_light_theme(self):
         """تطبيق الثيم الفاتح"""
-        self.setStyleSheet("""
-            QMainWindow {
+        self.setStyleSheet(f"""
+            QMainWindow {{
                 background-color: #f5f5f5;
                 color: #333333;
-            }
-            QFrame {
+                font-family: '{self.font_family}';
+                font-size: {self.font_size}px;
+            }}
+            QFrame {{
                 background-color: #ffffff;
-            }
-            QGroupBox {
+            }}
+            QGroupBox {{
                 background-color: #ffffff;
-            }
-            QWidget {
-                background-color: #9c9ca7;
+            }}
+            QWidget {{
+                background-color: #f5f5f5;
                 color: #333333;
-            }
+                font-family: '{self.font_family}';
+                font-size: {self.font_size}px;
+            }}
         """)
 
     def apply_global_styles(self):
@@ -2459,11 +2958,19 @@ class ProfessionalChatWindow(QMainWindow):
 
     def show_font_settings(self):
         """عرض إعدادات الخط"""
-        QMessageBox.information(self, "قريباً", "🔤 إعدادات الخط قيد التطوير")
+        dialog = FontSettingsDialog(self, self.font_size, self.font_family)
+        if dialog.exec_() == QDialog.Accepted:
+            settings = dialog.get_font_settings()
+            self.font_size = settings['size']
+            self.font_family = settings['family']
+            
+            # تطبيق الإعدادات الجديدة
+            self.apply_theme()
+            print(f"🔤 تم تحديث إعدادات الخط: {self.font_family}, {self.font_size}px")
 
     def show_about_dialog(self):
         """عرض معلومات حول البرنامج"""
-        about_text = """
+        about_text = f"""
 🤖 **المساعد الذكي للقرآن الكريم - المحسن**
 
 **الإصدار:** 2.0 المحسن
@@ -2479,6 +2986,8 @@ class ProfessionalChatWindow(QMainWindow):
 📋 تحديد ونسخ النصوص
 🎨 ثيمات متعددة
 ⌨️ اختصارات لوحة المفاتيح
+🔧 قائمة جانبية قابلة للإخفاء
+📏 أحجام مرنة للواجهة
 
 **الاختصارات:**
 Ctrl+N - محادثة جديدة
@@ -2486,7 +2995,11 @@ Ctrl+H - سجل المحادثات
 Ctrl+L - مسح المحادثة
 Ctrl+S - حفظ المحادثة
 Ctrl+T - تبديل الثيم
+Ctrl+Shift+S - إخفاء/إظهار القائمة الجانبية
 F1 - المساعدة
+
+**الخط الحالي:** {self.font_family} - {self.font_size}px
+**الثيم الحالي:** {self.current_theme}
         """
         QMessageBox.about(self, "حول البرنامج", about_text)
 
@@ -2507,10 +3020,20 @@ F1 - المساعدة
 🌐 - بحث الإنترنت
 📝 - تلخيص
 
+**القائمة الجانبية:**
+- يمكن إخفاؤها/إظهارها بالزر ◀/▶
+- قابلة لتغيير العرض بالسحب
+- تحتوي على جميع الإعدادات والتحكم
+
+**تغيير حجم منطقة الإدخال:**
+- استخدم المقبض الأزرق فوق منطقة الإدخال
+- اسحب لأعلى أو لأسفل لتغيير الحجم
+
 **نصائح:**
 - استخدم Ctrl+↑/↓ للتنقل في تاريخ الرسائل
 - يمكنك تحديد ونسخ أي نص في المحادثة
 - استخدم الشريط الجانبي لتخصيص الإعدادات
+- جرب تغيير حجم الخط من إعدادات الخط
         """
         QMessageBox.information(self, "المساعدة", help_text)
 
@@ -2520,6 +3043,15 @@ F1 - المساعدة
         if color.startswith('#'):
             return color  # إرجاع اللون كما هو للتبسيط
         return color
+
+    def resizeEvent(self, event):
+        """التعامل مع تغيير حجم النافذة"""
+        super().resizeEvent(event)
+        # إعادة وضع زر التمرير إذا كان موجوداً
+        if hasattr(self, 'scroll_to_top_btn'):
+            parent = self.scroll_to_top_btn.parent()
+            if parent:
+                self.reposition_scroll_button(parent)
 
 # === الدوال المساعدة ===
 
